@@ -1,0 +1,53 @@
+#BLOQUE LA NAVEGACION POR CARPETAS
+
+Options -Indexes
+
+RewriteEngine on
+
+
+Options +FollowSymLinks
+
+
+
+<FilesMatch "\.(ttf|otf|eot|woff)$">
+<IfModule mod_headers.c>
+SetEnvIf Origin "http(s)?://(www\.)?(google.com|staging.google.com|development.google.com|otherdomain.net|dev02.otherdomain.net)$" AccessControlAllowOrigin=$0
+Header add Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+</IfModule>
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    SetEnvIf Origin "http(s)?://(www\.)?(zavweb.com|186.183.178.11|192.168.1.4)$" AccessControlAllowOrigin=$0$1
+    Header add Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+    Header set Access-Control-Allow-Credentials true
+    Header always append Access-Control-Allow-Origin: "*"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+<IfModule mod_negotiation.c>
+Options -MultiViews
+</IfModule>
+
+RewriteEngine On
+
+# Redirect Trailing Slashes If Not A Folder
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+# Handle Front Controller...
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]
+
+# Handle Authorization Header
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+
+# implement URL Routing in PHP
+Options -MultiViews
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
+
+#RewriteRule ^usuario(/.*)?$ usuario.php [L]
