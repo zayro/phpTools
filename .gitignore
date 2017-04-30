@@ -2,3 +2,5 @@
 
 build/*
 vendor
+composer.lock
+php-7.1.4-Win32-VC14-x64/*
