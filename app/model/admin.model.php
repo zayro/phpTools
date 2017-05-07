@@ -17,9 +17,10 @@ $system = new system();
  */
 class admin extends connect
 {
-    public function __construct()
+
+    public function __construct($user = '', $pass = '')
     {
-        parent::__construct($_SESSION['datos']['identificacion'], $_SESSION['datos']['clave']);
+        parent::__construct($user, $pass);
     }
 
     public function add($table, $data)
@@ -50,9 +51,9 @@ class admin extends connect
         $this->disconnect();
     }
 
-    public function add_last_insert($table, $data)
+    public function add_last_insert($table, $data, $explore = ',')
     {
-        $result = $this->increment("$table", " $data");
+        $result = $this->increment("$table", "$data", $explore);
 
         if ($result === false) {
             $result = array(
@@ -384,7 +385,7 @@ class admin extends connect
 
                 $data = substr($process, 0, -2);
 
-                $result = $this->insert("$table", " $data", '|*');
+                $result = $this->add_last_insert("$table", " $data", '|*');
 
                 if ($result === false) {
                     $result = array(
@@ -393,11 +394,14 @@ class admin extends connect
                       'success' => false,
                       );
 
-                    print_r($result);
-
                     $this->transaction('R');
 
-                    return false;
+                    $result = array(
+            'success' => false,
+            'result' => $result,
+            );
+
+                    return  json_encode($result);
                 }
 
                 ++$i;
@@ -406,6 +410,10 @@ class admin extends connect
 
         $this->transaction('C');
 
-        return true;
+        $result = array(
+            'success' => true,
+            );
+
+        return json_encode($result);
     }
 }

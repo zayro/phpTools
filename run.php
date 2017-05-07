@@ -53,12 +53,13 @@ $token = null;
 
 $headers = apache_request_headers();
 
-if(isset($headers['Authorization'])){
+if(isset($headers['Authorization']) and !empty($headers['Authorization'])){
 
-#print ($headers['Authorization']);
+$token = $headers['Authorization'];
 
 }
 */
+
 
 extract($_REQUEST);
 
@@ -66,5 +67,4 @@ $request = strtoupper($_SERVER['REQUEST_METHOD']);
 
 $returnValue = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-#require_once __DIR__.'/vendor/autoload.php';
-require_once  __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';

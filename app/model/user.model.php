@@ -6,6 +6,7 @@ namespace app\model;
 
 use app\config\connect;
 use library\system;
+use library\auth;
 
 class usuarios extends connect
 {
@@ -39,7 +40,15 @@ class usuarios extends connect
 
             $rows = $this->query_secure($sql, $params, true, true);
 
-            $result = array('menu' => $rows,  'datos' => $result, 'instancia' => 'login', 'estado' => 'success');
+            $token = array('user' => $usuario, 'id' => base64_encode($clave));
+
+            $result = array(
+              'menu' => $rows,
+               'datos' => $result,
+               'instancia' => 'login',
+                'estado' => 'success',
+              'token' => auth::SignIn($token),
+              );
 
             system::cabeceras(202);
         } else {
@@ -48,7 +57,6 @@ class usuarios extends connect
             'params' => $params,
             'instance' => 'login',
             );
-
             system::cabeceras(401);
         }
 

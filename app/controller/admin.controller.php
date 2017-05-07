@@ -2,13 +2,30 @@
 
 require_once '../../run.php';
 
-use app\model\admin;
+
 use library\system;
+use library\auth;
+use app\model\admin;
 
-$objeto = new admin();
 $system = new system();
+$auth = new auth();
 
-$system->validar_session();
+if(isset($_SESSION['datos']['identificacion']) and isset($_SESSION['datos']['clave'])){
+$admin_user  = $_SESSION['datos']['identificacion'];
+$admin_pass = $_SESSION['datos']['clave'];
+$objeto = new admin($admin_user, $admin_pass);
+}
+
+if($auth->getBearerToken() != null){
+  $auth::check($auth->getBearerToken());
+  $payload = ($auth::GetData($auth->getBearerToken()));
+  $admin_pass = base64_decode($payload->id);
+  $admin_user = $payload->user;
+  $objeto = new admin($admin_user, $admin_pass);
+}
+
+
+
 
 $url = explode(basename(__FILE__).'/', trim($returnValue, '/'));
 $first = array_shift($url);
@@ -37,7 +54,7 @@ if (isset($method) and $method == 'column') {
 }
 
 if (isset($method) and $method == 'consult') {
-    $result = $objeto->consult($fields, $table);
+    $result = $objeto->consult($field, $table);
     echo $result;
 }
 
@@ -47,7 +64,7 @@ if (isset($method) and $method == 'sql') {
 }
 
 if (isset($method) and $method == 'filter') {
-    $result = $objeto->filter($fields, $table, $condition);
+    $result = $objeto->filter($field, $table, $condition);
     echo $result;
 }
 
@@ -68,7 +85,7 @@ case 'POST':
     $receives = json_decode(file_get_contents('php://input'), true);
 
 if (isset($method) and $method == 'add') {
-      $process = '';
+    $process = '';
 
     foreach ($receives as $key => $val) {
         $process .= $key.'='."'$val',";
@@ -79,7 +96,7 @@ if (isset($method) and $method == 'add') {
 }
 
 if (isset($method) and $method == 'add_last_insert') {
-      $process = '';
+    $process = '';
 
     foreach ($receives as $key => $val) {
         $process .= $key.'='."'$val',";
@@ -90,7 +107,7 @@ if (isset($method) and $method == 'add_last_insert') {
 }
 
 if (isset($method) and $method == 'transaction_json') {
-    $objeto->transaction_json($receives);
+    echo $objeto->transaction_json($receives);
 }
 
 break;

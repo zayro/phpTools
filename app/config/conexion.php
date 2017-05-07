@@ -3,7 +3,6 @@
 namespace app\config;
 
 use library\system;
-
 //require_once '../../run.php';
 
 use library\DBMS;
@@ -34,12 +33,12 @@ class connect extends DBMS
         $this->password_type = $password;
         $this->db_type = $bd;
 
-       parent::__construct($this->database_type, $this->host_type, $this->db_type, $this->user_type, $this->password_type, $this->port_type);
+        parent::__construct($this->database_type, $this->host_type, $this->db_type, $this->user_type, $this->password_type, $this->port_type);
 
-       $response = $this->Cnxn();
+        $response = $this->Cnxn();
 
         if ($response === false) {
-            $result = array('Error' => $this->getError(),'success' => false );
+            $result = array('Error' => $this->getError(), 'success' => false);
             system::cabeceras(401);
         } else {
             $result = array('success' => true);
