@@ -2,24 +2,31 @@
 #iniciar sessiones
 session_start();
 
-$origen = isset($_SERVER['HTTP_ORIGIN'])?$_SERVER['HTTP_ORIGIN']:'*';
+if (isset($_SERVER['HTTP_ORIGIN'])) {
+    header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Max-Age: 86400');
+}
 
-header("Access-Control-Allow-Origin:  $origen ");
 
-header("Access-Control-Allow-Credentials: true");
+#header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Auth-Toke");
 
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE');
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
-header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Toke');
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+        header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+}
 
 # habilitar compresiones
 #ini_set("zlib.output_compression", "On");
 
 
 # activar o desactivar mensajes de error
-error_reporting(E_ALL);
+
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
 ini_set("display_errors", 1);
 
 set_time_limit(0);
