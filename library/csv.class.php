@@ -20,6 +20,12 @@ use app\config\connect;
  */
 class csv extends connect
 {
+
+      public function __construct($user = '', $pass = '')
+    {
+        parent::__construct($user, $pass);
+    }
+
     /**
      * EXPORTAR CSV TABLA BDD.
      *
@@ -67,6 +73,17 @@ class csv extends connect
     {
         $rows = $this->query($sql);
 
+
+        if ($rows === false) {
+
+            $result = array(
+        'sql' => $this->sql,
+        'Error' => $this->getError(),
+        'instance' => 'filter',
+        );
+
+        } else {
+
         $f = fopen('php://output', 'w');
 
         header('Content-Type: text/csv');
@@ -83,7 +100,20 @@ class csv extends connect
 
         fclose($f);
 
-        exit;
+         $result = array(
+        'sql' => $this->sql,
+        'success' => true,
+        'result' => $result,
+        'total' => $this->rowcount(),
+        'instance' => 'filter',
+        );
+        }
+
+
+        return json_encode($result);
+        $this->disconnect();
+
+        #exit;
     }
 
     /**
