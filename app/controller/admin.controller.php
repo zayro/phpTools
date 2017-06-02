@@ -6,26 +6,38 @@ require_once '../../run.php';
 use library\system;
 use library\auth;
 use app\model\admin;
+use library\csv;
 
 $system = new system();
 $auth = new auth();
 
 if(isset($_SESSION['datos']['identificacion']) and isset($_SESSION['datos']['clave'])){
-$admin_user  = $_SESSION['datos']['identificacion'];
-$admin_pass = $_SESSION['datos']['clave'];
-$objeto = new admin($admin_user, $admin_pass);
-}
 
-if($auth->getBearerToken() != null){
+  $admin_user  = $_SESSION['datos']['identificacion'];
+  $admin_pass = $_SESSION['datos']['clave'];
+  $objeto = new admin($admin_user, $admin_pass);
+  $csv = new csv($admin_user, $admin_pass);
+
+
+}elseif($auth->getBearerToken() != null){
+
   $auth::check($auth->getBearerToken());
   $payload = ($auth::GetData($auth->getBearerToken()));
   $admin_pass = base64_decode($payload->id);
   $admin_user = $payload->user;
   $objeto = new admin($admin_user, $admin_pass);
+  $csv = new csv($admin_user, $admin_pass);
+
+
+}else{
+
+if(isset($method) != 'OPTIONS'){
+  print json_encode(array('error_autenticacion' => 'no existe un token ni session para validar datos'));
+  system::cabeceras(401);
+  exit();
 }
 
-
-
+}
 
 $url = explode(basename(__FILE__).'/', trim($returnValue, '/'));
 $first = array_shift($url);
@@ -37,6 +49,10 @@ case 'GET':
 
 if (isset($method) and $method == 'all_csv') {
     $csv->all_csv($table, $file);
+}
+
+if (isset($method) and $method == 'query_csv') {
+  $csv->query_csv($sql, $file);
 }
 
 if (isset($method) and $method == 'all_excel') {
@@ -58,22 +74,12 @@ if (isset($method) and $method == 'consult') {
     echo $result;
 }
 
-if (isset($method) and $method == 'sql') {
-    $result = $objeto->sql($query);
-    echo $result;
-}
-
-if (isset($method) and $method == 'filter') {
-    $result = $objeto->filter($field, $table, $condition);
-    echo $result;
-}
-
 if (isset($method) and $method == 'stored_procedure') {
     $result = $objeto->stored_procedure($procedure, $bdd);
     echo $result;
 }
 
-if (isset($table) and !isset($method)) {
+if (isset($method) and $method == 'all_field') {
     $result = $objeto->all_field($table);
     echo $result;
 }
@@ -82,7 +88,18 @@ break;
 
 case 'POST':
 
-    $receives = json_decode(file_get_contents('php://input'), true);
+$receives = json_decode(file_get_contents('php://input'), true);
+
+if (isset($method) and $method == 'sql') {
+    $result = $objeto->sql($receives['query']);
+    echo $result;
+}
+
+if (isset($method) and $method == 'filter') {
+    $result = $objeto->filter($receives['field'], $receives['table'], $receives['condition']);
+    echo $result;
+}
+
 
 if (isset($method) and $method == 'add') {
     $process = '';
