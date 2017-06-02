@@ -27,7 +27,7 @@ class connect extends DBMS
 
     protected $password_type;
 
-    public function __construct($user, $password, $bd = '')
+    public function __construct($user, $password, $bd = 'acceso')
     {
         $this->user_type = $user;
         $this->password_type = $password;
