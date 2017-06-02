@@ -4,6 +4,7 @@ namespace library;
 
 use PDO;
 use Exception;
+use PDOException;
 
 /**
  * PDO Database class.
@@ -27,7 +28,7 @@ class DBMS
     public $sql;
     private $con;
     private $count;
-    protected $err_msg;
+    protected $err_msg = array();
 
      /**
       * Constructor of class - Initializes class and connects to the database.
@@ -99,19 +100,20 @@ class DBMS
 
                 $this->con->exec('SET NAMES UTF8');
                 $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                //#this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+                //$this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                 //$this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
-              //$this->con->setAttribute(PDO::SQLSRV_ATTR_DIRECT_QUERY => true);
-        $this->con->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                //$this->con->setAttribute(PDO::SQLSRV_ATTR_DIRECT_QUERY => true);
+                //$this->con->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+                $this->con->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
                 return $this->con;
             } catch (PDOException $e) {
                 $this->err_msg['error'] = $e->getMessage();
-
-                $this->err_msg['errorCode'] = $this->con->errorCode();
+                #$this->err_msg['errorCode'] = $this->con->errorCode();
+                #eval(\Psy\sh());
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 /*
                 $this->err_msg["errorInfo"] = $this->con->errorInfo();
@@ -147,7 +149,7 @@ class DBMS
     //Execute the transactional operations
     public function transaction($arg)
     {
-        $this->err_msg = '';
+
         if ($this->con != null) {
             try {
                 if ($arg == 'B') {
@@ -167,7 +169,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -233,7 +235,7 @@ class DBMS
         //$transactionable = false;
         $arguments = null;
         $total_rows = 0;
-        $this->err_msg = '';
+
 
         if ($this->con != null) {
             try {
@@ -335,7 +337,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -352,7 +354,7 @@ class DBMS
     //Querys Anti SQL Injections
     public function query_secure($sql_statement, $params, $fetch_rows = false, $unnamed = false, $delimiter = '|')
     {
-        $this->err_msg = '';
+
         $this->sql = $sql_statement;
         if (!isset($unnamed)) {
             $unnamed = false;
@@ -378,7 +380,7 @@ class DBMS
                     $this->err_msg['errorCode'] = $this->con->errorCode();
 
                     return false;
-                } catch (Exception $e) {
+                } catch (Throwable $e) {
                     $this->err_msg['error'] = $e->getMessage();
                     $this->err_msg['errorInfo'] = $this->con->errorInfo();
                     $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -402,10 +404,13 @@ class DBMS
                     $this->err_msg['errorCode'] = $this->con->errorCode();
 
                     return false;
-                } catch (Exception $e) {
+                } catch (Throwable $e) {
+
+                  print_r($e->getMessage());
                     $this->err_msg['error'] = $e->getMessage();
                     $this->err_msg['errorInfo'] = $this->con->errorInfo();
                     $this->err_msg['errorCode'] = $this->con->errorCode();
+
 
                     return false;
                 }
@@ -422,7 +427,7 @@ class DBMS
     //Fetch the first row
     public function query_first($sql_statement)
     {
-        $this->err_msg = '';
+
         if ($this->con != null) {
             try {
                 $sttmnt = $this->con->prepare($sql_statement);
@@ -435,7 +440,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -452,7 +457,7 @@ class DBMS
     //Select single table cell from first record
     public function query_single($sql_statement)
     {
-        $this->err_msg = '';
+
         if ($this->con != null) {
             try {
                 $sttmnt = $this->con->prepare($sql_statement);
@@ -465,7 +470,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -482,7 +487,7 @@ class DBMS
     //Return name columns as vector
     public function columns($table)
     {
-        $this->err_msg = '';
+
         $this->sql = "SELECT * FROM $table";
         if ($this->con != null) {
             try {
@@ -499,7 +504,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -515,7 +520,7 @@ class DBMS
 
     public function increment($table, $data, $explode = ',')
     {
-        $this->err_msg = '';
+
         if ($this->con != null) {
             try {
                 $txt_fields = '';
@@ -538,7 +543,8 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
+
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -555,7 +561,7 @@ class DBMS
     //Insert and get newly created id
     public function insert($table, $data, $explode = ',')
     {
-        $this->err_msg = '';
+
         if ($this->con != null) {
             try {
                 $txt_fields = '';
@@ -578,7 +584,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -619,7 +625,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -636,7 +642,7 @@ class DBMS
     //Delete records from tables
     public function delete($table, $condition = '')
     {
-        $this->err_msg = '';
+
         if ($this->con != null) {
             try {
                 if (trim($condition) != '') {
@@ -656,7 +662,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -673,7 +679,7 @@ class DBMS
     //Execute Store Procedures
     public function execute($sp_query)
     {
-        $this->err_msg = '';
+
         if ($this->con != null) {
             try {
                 $this->con->exec($sp_query);
@@ -685,7 +691,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -702,7 +708,7 @@ class DBMS
     //Get latest specified id from specified table
     public function getLatestId($db_table, $table_field)
     {
-        $this->err_msg = '';
+
         $sql_statement = '';
         $dbtype = $this->database_type;
 
@@ -727,7 +733,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -744,7 +750,7 @@ class DBMS
     //Get all tables from specified database
     public function ShowTables($database)
     {
-        $this->err_msg = '';
+
         $complete = '';
         $sql_statement = '';
         $dbtype = $this->database_type;
@@ -780,7 +786,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -797,7 +803,7 @@ class DBMS
     //Get all databases from your server
     public function ShowDBS()
     {
-        $this->err_msg = '';
+
         $sql_statement = '';
         $dbtype = $this->database_type;
 
@@ -826,7 +832,7 @@ class DBMS
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -855,7 +861,7 @@ class DBMS
     //Disconnect database
     public function disconnect()
     {
-        $this->err_msg = '';
+
         if ($this->con) {
             $this->con = null;
 

@@ -16,11 +16,12 @@ class auth
     public static function SignIn($data)
     {
         $time = time();
-
+        $hora = 4;
         $token = array(
-            'exp' => $time + (60 * 60),
+            'iat' => $time, // Tiempo que inició el token
+            'exp' => $time + ((60 * 60) * $hora),  // Tiempo que expirará el token (+1 hora)
             'aud' => self::Aud(),
-            'data' => $data,
+            'data' => $data, // información del usuario
         );
 
         return JWT::encode($token, self::$secret_key);

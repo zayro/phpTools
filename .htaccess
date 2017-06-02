@@ -1,3 +1,8 @@
+#Header add Access-Control-Allow-Origin
+#"*"
+
+
+
 #BLOQUE LA NAVEGACION POR CARPETAS
 
 Options -Indexes

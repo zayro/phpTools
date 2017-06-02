@@ -62,6 +62,7 @@ class admin extends connect
             'success' => false,
             'instance' => 'add_last_insert',
         );
+        exit();
         } else {
             $result = array(
             'success' => true,
@@ -97,54 +98,6 @@ class admin extends connect
 
             return json_encode($result);
         }
-        $this->disconnect();
-    }
-
-    public function remove($table, $id)
-    {
-        $result = $this->delete("$table", "id = $id");
-        if ($result === false) {
-            $error = array(
-            'error' => $this->getError(),
-            'msg' => $this->err_msg,
-            );
-
-            return json_encode($error);
-        } else {
-            $result = array(
-            'success' => true,
-            'result' => $result,
-            );
-
-            $this->audit("se elimino: $table", $this->sql);
-
-            return json_encode($result);
-        }
-        $this->disconnect();
-    }
-
-    public function remove_temp($table, $id)
-    {
-        $execute = "UPDATE $table SET eliminado = NOW() WHERE id = $id ";
-        $result = $this->query($execute);
-
-        if ($result === false) {
-            $result = array(
-            'sql' => $this->sql,
-            'Error' => $this->getError(),
-            'instance' => 'consult',
-        );
-        } else {
-            $result = array(
-            'sql' => $this->sql,
-            'success' => true,
-            'result' => $result,
-            'total' => $this->rowcount(),
-            'instance' => 'consult',
-        );
-        }
-
-        return json_encode($result);
         $this->disconnect();
     }
 
@@ -322,37 +275,37 @@ class admin extends connect
         $this->disconnect();
     }
 
-    public function audit($mensaje, $proceso)
+    private function audit($mensaje, $proceso)
     {
         $ip = system::obtener_ip();
-        $identificacion = $_SESSION['datos']['identificacion'];
         $archivo = __FILE__;
 
-        $sql = 'INSERT INTO auditoria (mensaje,proceso,identificacion,ip,archivo, user) values (?,?,?,?,?, current_user);';
+        $sql = "INSERT INTO auditoria (mensaje,proceso,ip,archivo, user) values (?,?,?,?, current_user);";
 
         $params = array(
         "$mensaje",
         "$proceso",
-        "$identificacion",
         "$ip",
         "$archivo",
         );
 
-        $result = $this->query_secure($sql, $params, true, true);
+        $result = $this->query_secure($sql, $params, false, true);
+
+
 
         if ($result === false) {
             $result = array(
             'sql' => $this->sql,
             'Error' => $this->getError(),
             'success' => false,
-            'instance' => 'add',
+            'instance' => 'audit',
         );
         } else {
             $result = array(
             'success' => true,
             'result' => $result,
             'total' => $this->rowcount(),
-            'instance' => 'add',
+            'instance' => 'audit',
         );
         }
 
@@ -388,18 +341,16 @@ class admin extends connect
                 $result = $this->add_last_insert("$table", " $data", '|*');
 
                 if ($result === false) {
+
                     $result = array(
                       'sql' => $this->sql,
                       'Error' => $this->getError(),
                       'success' => false,
+                      'result' => $result,
                       );
 
+                    system::cabecera_html();
                     $this->transaction('R');
-
-                    $result = array(
-            'success' => false,
-            'result' => $result,
-            );
 
                     return  json_encode($result);
                 }
@@ -408,6 +359,7 @@ class admin extends connect
             }
         }
 
+        system::cabecera_json();
         $this->transaction('C');
 
         $result = array(
@@ -416,4 +368,55 @@ class admin extends connect
 
         return json_encode($result);
     }
+
+    public function remove($table, $id)
+    {
+        $result = $this->delete("$table", "id = $id");
+        if ($result === false) {
+            $error = array(
+            'error' => $this->getError(),
+            'msg' => $this->err_msg,
+            );
+
+            return json_encode($error);
+        } else {
+            $result = array(
+            'success' => true,
+            'result' => $result,
+            );
+
+            $this->audit("se elimino: $table", $this->sql);
+
+            return json_encode($result);
+        }
+        $this->disconnect();
+    }
+
+    public function remove_temp($table, $id)
+    {
+        $execute = "UPDATE $table SET eliminado = NOW() WHERE id = $id ";
+        $result = $this->query($execute);
+
+        if ($result === false) {
+            $result = array(
+            'sql' => $this->sql,
+            'Error' => $this->getError(),
+            'instance' => 'remove_temp',
+        );
+        } else {
+            $result = array(
+            'sql' => $this->sql,
+            'success' => true,
+            'result' => $result,
+            'total' => $this->rowcount(),
+            'instance' => 'remove_temp',
+        );
+        }
+
+        return json_encode($result);
+        $this->disconnect();
+    }
 }
+# cll 41 # 13-08
+# laura rincon
+# unidad de victimas

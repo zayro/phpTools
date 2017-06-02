@@ -34,7 +34,7 @@ class usuarios extends connect
             'instance' => 'login', );
             system::cabeceras(401);
         } elseif ($this->rowcount() > 0) {
-            $sql = 'SELECT m.nombre AS menu, submenu_1.nombre AS submenu1, submenu_1.modulo AS modulo1, submenu_2.nombre AS submenu2, submenu_2.modulo AS modulo2 FROM acceso.privilegio AS p INNER JOIN acceso.grupo AS g ON p.id_grupo = g.id INNER JOIN acceso.menu AS m ON p.id_menu = m.id INNER JOIN acceso.usuarios AS u ON u.id_grupo = g.id LEFT JOIN acceso.submenu_1 ON submenu_1.id_menu = m.id LEFT JOIN acceso.submenu_2 ON submenu_2.id_submenu_1 = submenu_1.id WHERE u.identificacion = ? ORDER BY m.nombre ASC';
+            $sql = 'SELECT m.nombre AS menu, submenu_1.nombre AS submenu1, submenu_1.modulo AS modulo1, submenu_2.nombre AS submenu2, submenu_2.modulo AS modulo2 FROM acceso.privilegio AS p INNER JOIN acceso.grupo AS g ON p.id_grupo = g.id INNER JOIN acceso.menu AS m ON p.id_menu = m.id INNER JOIN acceso.usuarios AS u ON u.id_grupo = g.id LEFT JOIN acceso.submenu_1 ON submenu_1.id_menu = m.id LEFT JOIN acceso.submenu_2 ON submenu_2.id_submenu_1 = submenu_1.id WHERE u.identificacion = ? ORDER BY 	m.nombre, submenu_1.nombre  ASC';
 
             $params = array("$usuario");
 
@@ -92,7 +92,7 @@ class usuarios extends connect
 
     public function exit()
     {
-        session_destroy();
+        @session_destroy();
     }
 }
 

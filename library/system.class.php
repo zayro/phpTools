@@ -73,7 +73,7 @@ public static function cabeceras($estado)
         header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
     }
 
-    protected function cabecera_html()
+    public  static function cabecera_html()
     {
         header('Content-Type:text/html');
     }
