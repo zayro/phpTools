@@ -84,6 +84,11 @@ if (isset($method) and $method == 'all_field') {
     echo $result;
 }
 
+if (isset($method) and $method == 'exit') {
+    $result = $objeto->exit();
+    echo $result;
+}
+
 break;
 
 case 'POST':
