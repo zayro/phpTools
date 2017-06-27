@@ -416,7 +416,8 @@ class admin extends connect
         return json_encode($result);
         $this->disconnect();
     }
+
+    public function exit(){
+      @session_destroy;
+    }
 }
-# cll 41 # 13-08
-# laura rincon
-# unidad de victimas
