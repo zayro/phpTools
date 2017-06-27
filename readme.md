@@ -1,4 +1,4 @@
-# API - librerias para php
+# API - ORM PHP
 
 ## COMANDOS PARA DE FUNCIONAMIENTO PHP
 
@@ -26,15 +26,37 @@ composer require "nombre" --dev
 composer dump-autoload --optimize 
 ```
 
-
-- instalar componentes de composer 
+- remover componentes de composer 
 
 ```shell
 composer remove "nombre" 
 composer global remove phpunit/phpunit 
 ```
+## Manual de uso:
 
+#### Fetching Row:
+This method always returns only 1 row.
+```php
+<?php
+$ages     =  $db->row("SELECT * FROM Persons WHERE  id = :id", array("id"=>"1"));
+```
+##### Result
+| id | firstname | lastname | sex | age
+|:-----------:|:------------:|:------------:|:------------:|:------------:|
+| 1       |        John |     Doe    | M | 19
 
+#### Fetching Single Value:
+This method returns only one single value of a record.
+```php
+<?php
+// Fetch one single value
+$db->bind("id","3");
+$firstname = $db->single("SELECT firstname FROM Persons WHERE id = :id");
+```
+##### Result
+|firstname
+|:------------:
+| Zoe
 
 ## CONFIGURAR COMPOSER.JSON
 
