@@ -1,6 +1,6 @@
 <?php
 
-require '../../pdo.class.php';
+require '../../library/pdo.class.php';
 
 use library\DBMS;
 

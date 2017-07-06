@@ -1,6 +1,6 @@
 <?php
 
-namespace app\config;
+namespace config;
 
 use library\system;
 //require_once '../../run.php';
