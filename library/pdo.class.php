@@ -24,11 +24,13 @@ class DBMS
     private $port;
     private $database_type;
     private $root_mdb;
-
-    public $sql;
     private $con;
     private $count;
+
+    public $sql;
+
     protected $err_msg = array();
+    
 
      /**
       * Constructor of class - Initializes class and connects to the database.
@@ -149,7 +151,6 @@ class DBMS
     //Execute the transactional operations
     public function transaction($arg)
     {
-
         if ($this->con != null) {
             try {
                 if ($arg == 'B') {
@@ -354,7 +355,6 @@ class DBMS
     //Querys Anti SQL Injections
     public function query_secure($sql_statement, $params, $fetch_rows = false, $unnamed = false, $delimiter = '|')
     {
-
         $this->sql = $sql_statement;
         if (!isset($unnamed)) {
             $unnamed = false;
@@ -405,8 +405,7 @@ class DBMS
 
                     return false;
                 } catch (Throwable $e) {
-
-                  print_r($e->getMessage());
+                    print_r($e->getMessage());
                     $this->err_msg['error'] = $e->getMessage();
                     $this->err_msg['errorInfo'] = $this->con->errorInfo();
                     $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -427,7 +426,6 @@ class DBMS
     //Fetch the first row
     public function query_first($sql_statement)
     {
-
         if ($this->con != null) {
             try {
                 $sttmnt = $this->con->prepare($sql_statement);
@@ -457,7 +455,6 @@ class DBMS
     //Select single table cell from first record
     public function query_single($sql_statement)
     {
-
         if ($this->con != null) {
             try {
                 $sttmnt = $this->con->prepare($sql_statement);
@@ -487,7 +484,6 @@ class DBMS
     //Return name columns as vector
     public function columns($table)
     {
-
         $this->sql = "SELECT * FROM $table";
         if ($this->con != null) {
             try {
@@ -520,7 +516,6 @@ class DBMS
 
     public function increment($table, $data, $explode = ',')
     {
-
         if ($this->con != null) {
             try {
                 $txt_fields = '';
@@ -544,7 +539,6 @@ class DBMS
 
                 return false;
             } catch (Throwable $e) {
-
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
@@ -561,7 +555,6 @@ class DBMS
     //Insert and get newly created id
     public function insert($table, $data, $explode = ',')
     {
-
         if ($this->con != null) {
             try {
                 $txt_fields = '';
@@ -642,7 +635,6 @@ class DBMS
     //Delete records from tables
     public function delete($table, $condition = '')
     {
-
         if ($this->con != null) {
             try {
                 if (trim($condition) != '') {
@@ -679,7 +671,6 @@ class DBMS
     //Execute Store Procedures
     public function execute($sp_query)
     {
-
         if ($this->con != null) {
             try {
                 $this->con->exec($sp_query);
@@ -708,7 +699,6 @@ class DBMS
     //Get latest specified id from specified table
     public function getLatestId($db_table, $table_field)
     {
-
         $sql_statement = '';
         $dbtype = $this->database_type;
 
@@ -750,7 +740,6 @@ class DBMS
     //Get all tables from specified database
     public function ShowTables($database)
     {
-
         $complete = '';
         $sql_statement = '';
         $dbtype = $this->database_type;
@@ -803,7 +792,6 @@ class DBMS
     //Get all databases from your server
     public function ShowDBS()
     {
-
         $sql_statement = '';
         $dbtype = $this->database_type;
 
@@ -861,7 +849,6 @@ class DBMS
     //Disconnect database
     public function disconnect()
     {
-
         if ($this->con) {
             $this->con = null;
 
