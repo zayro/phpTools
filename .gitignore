@@ -1,5 +1,6 @@
 # -- IGNORE FOLDER AND FILE --
 
+library/build/**/*
 library/build/*
 vendor
 composer.lock
