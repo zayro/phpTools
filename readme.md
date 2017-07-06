@@ -1,7 +1,8 @@
 # API - ORM PHP
 
-## COMANDOS PARA DE FUNCIONAMIENTO PHP
+## synopsis:
 
+## INSTALLATION
 - instalar componentes de composer 
 
 ```shell
@@ -32,40 +33,65 @@ composer dump-autoload --optimize
 composer remove "nombre" 
 composer global remove phpunit/phpunit 
 ```
-## Manual de uso:
+
+#### CONFIGURAR COMPOSER.JSON
+
+- configurar la ruta donde va a instalar los arhivos de composer
+
+```json
+    "config": {
+        "vendor-dir": "back/vendor"
+    }
+```
+
+## Code Example:
 
 #### Fetching Row:
-This method always returns only 1 row.
-```php
-<?php
-$ages     =  $db->row("SELECT * FROM Persons WHERE  id = :id", array("id"=>"1"));
-```
-##### Result
-| id | firstname | lastname | sex | age
-|:-----------:|:------------:|:------------:|:------------:|:------------:|
-| 1       |        John |     Doe    | M | 19
+- SELECT Statement With NAMED PLACEHOLDERS: 
 
-#### Fetching Single Value:
-This method returns only one single value of a record.
 ```php
 <?php
-// Fetch one single value
-$db->bind("id","3");
-$firstname = $db->single("SELECT firstname FROM Persons WHERE id = :id");
+
+$params = array(':id|2|INT');
+
+$rows = $db->query_secure('SELECT ID, NAME, LASTNAME FROM TABLE WHERE ID=:id;', $params, true, false);
+```
+- SELECT Statement With "UNNAMED PLACEHOLDERS :
+```php
+<?php
+
+$params = array(2);
+
+$rows = $db->query_secure('SELECT NAME FROM TB_USERS WHERE ID=?;', $params, true, true);
+```
+
+##### Result
+
+Sample result example
+
+| id | name | lastname | 
+|:-----------:|:------------:|:------------:|
+| 1       |        John |     Doe    
+
+
+#### How To Get The Latest Id.
+
+IMPORTANT: For getting the latest id inserted is neccessary define the id column how autoincrement.
+
+```php
+<?php
+
+$latestInserted = $db->getLatestId('TABLE', 'ID');
 ```
 ##### Result
+
+Sample result example
+
 |firstname
 |:------------:
 | Zoe
 
-## CONFIGURAR COMPOSER.JSON
-
-- configurar la ruta donde va a instalar los arhivos de composer
-
-    "config": {
-        "vendor-dir": "back/vendor"
-    },
-
+## Development tools:
 
 ### puede ejecutar el comando en el directorio vendor/bin
 
@@ -84,9 +110,9 @@ phpdoc -d ../../back/library -t ../../back/library/build/docs/ --template="respo
 phpdoc -d ../../back/library -f ../../back/library/pdo.class  -t ../../back/library/build/docs/ --template="responsive" --ignore "testing/*"
 ```
 
-### indentacion codigo php
+### Code indentation
 
-```shell
+```bash
 
 php-cs-fixer fix back/app/model/admin.model.php --rules=@PSR2,@Symfony--using-cache=no --show-progress=evaluating
 
