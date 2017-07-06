@@ -4,6 +4,7 @@ namespace app\config;
 
 use library\system;
 //require_once '../../run.php';
+include 'access.php';
 
 use library\DBMS;
 
@@ -17,17 +18,17 @@ const PI = 3.14;
  */
 class connect extends DBMS
 {
-    protected $database_type = 'mysql';
+    protected $database_type = typeDatabase;
 
-    protected $host_type = 'localhost';
+    protected $host_type = host;
 
-    protected $port_type = '3307';
+    protected $port_type = port;
 
     protected $user_type;
 
     protected $password_type;
 
-    public function __construct($user, $password, $bd = 'acceso')
+    public function __construct($user, $password, $bd = database)
     {
         $this->user_type = $user;
         $this->password_type = $password;
