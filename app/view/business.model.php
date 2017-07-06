@@ -4,7 +4,7 @@ namespace app\model;
 
 //require_once('../config/conexion.php');
 
-use app\config\connect;
+use config\connect;
 
 /**
  * CLASE ADMIN PRINCIPAL.

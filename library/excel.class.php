@@ -4,7 +4,7 @@ namespace library;
 
 //require_once('../run.php');
 
-use app\config\connect;
+use config\connect;
 
 /**
  * CLASE EXCEL.

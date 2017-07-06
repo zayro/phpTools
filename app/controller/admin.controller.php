@@ -11,32 +11,24 @@ use library\csv;
 $system = new system();
 $auth = new auth();
 
-if(isset($_SESSION['datos']['identificacion']) and isset($_SESSION['datos']['clave'])){
-
-  $admin_user  = $_SESSION['datos']['identificacion'];
-  $admin_pass = $_SESSION['datos']['clave'];
-  $objeto = new admin($admin_user, $admin_pass);
-  $csv = new csv($admin_user, $admin_pass);
-
-
-}elseif($auth->getBearerToken() != null){
-
-  $auth::check($auth->getBearerToken());
-  $payload = ($auth::GetData($auth->getBearerToken()));
-  $admin_pass = base64_decode($payload->id);
-  $admin_user = $payload->user;
-  $objeto = new admin($admin_user, $admin_pass);
-  $csv = new csv($admin_user, $admin_pass);
-
-
-}else{
-
-if(isset($method) != 'OPTIONS'){
-  print json_encode(array('error_autenticacion' => 'no existe un token ni session para validar datos'));
-  system::cabeceras(401);
-  exit();
-}
-
+if (isset($_SESSION['datos']['identificacion']) and isset($_SESSION['datos']['clave'])) {
+    $admin_user  = $_SESSION['datos']['identificacion'];
+    $admin_pass = $_SESSION['datos']['clave'];
+    $objeto = new admin($admin_user, $admin_pass);
+    $csv = new csv($admin_user, $admin_pass);
+} elseif ($auth->getBearerToken() != null) {
+    $auth::check($auth->getBearerToken());
+    $payload = ($auth::GetData($auth->getBearerToken()));
+    $admin_pass = base64_decode($payload->id);
+    $admin_user = $payload->user;
+    $objeto = new admin($admin_user, $admin_pass);
+    $csv = new csv($admin_user, $admin_pass);
+} else {
+    if (isset($method) != 'OPTIONS') {
+        print json_encode(array('error_autenticacion' => 'no existe un token ni session para validar datos'));
+        system::cabeceras(401);
+        exit();
+    }
 }
 
 $url = explode(basename(__FILE__).'/', trim($returnValue, '/'));
@@ -52,7 +44,7 @@ if (isset($method) and $method == 'all_csv') {
 }
 
 if (isset($method) and $method == 'query_csv') {
-  $csv->query_csv($sql, $file);
+    $csv->query_csv($sql, $file);
 }
 
 if (isset($method) and $method == 'all_excel') {

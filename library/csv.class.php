@@ -2,7 +2,7 @@
 
 namespace library;
 
-use app\config\connect;
+use config\connect;
 
 /**
  * CLASE CSV.
@@ -20,8 +20,7 @@ use app\config\connect;
  */
 class csv extends connect
 {
-
-      public function __construct($user = '', $pass = '')
+    public function __construct($user = '', $pass = '')
     {
         parent::__construct($user, $pass);
     }
@@ -75,32 +74,29 @@ class csv extends connect
 
 
         if ($rows === false) {
-
             $result = array(
         'sql' => $this->sql,
         'Error' => $this->getError(),
         'instance' => 'filter',
         );
-
         } else {
+            $f = fopen('php://output', 'w');
 
-        $f = fopen('php://output', 'w');
+            header('Content-Type: text/csv');
 
-        header('Content-Type: text/csv');
+            header("Content-Disposition: attachement; filename='$archivo.csv'");
 
-        header("Content-Disposition: attachement; filename='$archivo.csv'");
+            header('Pragma: no-cache');
 
-        header('Pragma: no-cache');
+            header('Expires: 0');
 
-        header('Expires: 0');
+            foreach ($rows as $line) {
+                fputcsv($f, $line);
+            }
 
-        foreach ($rows as $line) {
-            fputcsv($f, $line);
-        }
+            fclose($f);
 
-        fclose($f);
-
-         $result = array(
+            $result = array(
         'sql' => $this->sql,
         'success' => true,
         'result' => $result,
