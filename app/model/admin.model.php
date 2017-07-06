@@ -14,16 +14,25 @@ $system = new system();
  *
  * En esta parte nos encargamos de crear los tipos de conexion del proyecto
  * para poder asi administrar los tipos de permisos de acceso
+ *
+ * @package app
+ * @subpackage model
  */
 class admin extends connect
 {
-
     public function __construct($user = '', $pass = '')
     {
         parent::__construct($user, $pass);
     }
 
-    public function add($table, $data)
+ /**
+  * Metodo agregar registros a la base de datos
+  *
+  * @param string $table *description* se debe colocar bdd.table
+  *
+  * @return json
+  */
+    public function add(string $table, string $data)
     {
         $result = $this->insert("$table", " $data");
 
@@ -47,8 +56,8 @@ class admin extends connect
         $this->audit("se almaceno: $table", $this->sql);
         }
 
-        return json_encode($result);
         $this->disconnect();
+        return json_encode($result);
     }
 
     public function add_last_insert($table, $data, $explore = ',')
@@ -62,7 +71,7 @@ class admin extends connect
             'success' => false,
             'instance' => 'add_last_insert',
         );
-        exit();
+            exit();
         } else {
             $result = array(
             'success' => true,
@@ -125,6 +134,28 @@ class admin extends connect
 
         return json_encode($result);
         $this->disconnect();
+    }
+
+    public function sql_file($file)
+    {
+        $sql = file_get_contents($file);
+        
+        $result = $this->query($sql);
+
+        if ($result === false) {
+            $result = array(
+            'Error' => $this->getError(),
+            'success' => false,
+            'instance' => 'add',
+        );
+        } else {
+            $result = array(
+            'success' => true,
+            'result' => $result,
+            'total' => $this->rowcount(),
+            'instance' => 'add',
+        );
+        }
     }
 
     public function filter($fields, $table, $condition)
@@ -341,7 +372,6 @@ class admin extends connect
                 $result = $this->add_last_insert("$table", " $data", '|*');
 
                 if ($result === false) {
-
                     $result = array(
                       'sql' => $this->sql,
                       'Error' => $this->getError(),
@@ -417,7 +447,8 @@ class admin extends connect
         $this->disconnect();
     }
 
-    public function exit(){
-      @session_destroy;
+    public function exit()
+    {
+        @session_destroy;
     }
 }
