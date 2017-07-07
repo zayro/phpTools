@@ -1,6 +1,6 @@
 <?php
 
-namespace app\model;
+namespace app\view;
 
 //require_once('../config/conexion.php');
 
