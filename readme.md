@@ -1,6 +1,7 @@
 # API - ORM PHP
 
-## synopsis:
+## SYNOPSIS
+Is an open source project that allows creating multi-platform connections with php language code, allowing restfull requests and jwt or session access.
 
 ## INSTALLATION
 - instalar componentes de composer 
