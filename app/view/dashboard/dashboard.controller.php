@@ -1,8 +1,8 @@
 <?php
 
-require_once '../../run.php';
+require_once '../../../run.php';
 
-use app\model\dashboard;
+use app\view\dashboard;
 use library\system;
 
 $system = new system();

@@ -1,13 +1,13 @@
 <?php
 
-require_once '../../run.php';
+require_once '../../../run.php';
 
 use library\system;
 
 $system = new system();
 $system->validar_session();
 
-use app\model\business;
+use app\view\business;
 use library\upload;
 use library\file;
 

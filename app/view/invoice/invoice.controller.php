@@ -1,8 +1,8 @@
 <?php
 
-require_once '../../run.php';
+require_once '../../../run.php';
 
-use app\model\invoice;
+use app\view\invoice;
 use library\system;
 
 $system = new system();
