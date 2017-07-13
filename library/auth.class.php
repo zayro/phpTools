@@ -48,9 +48,7 @@ class auth
             throw new Exception('Invalid user logged in.');
         }
 
-return  $decode;
-
-
+        return  $decode;
     }
 
 /**
@@ -121,5 +119,4 @@ public function getBearerToken()
 
     return null;
 }
-
 }
