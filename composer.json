@@ -1,34 +1,34 @@
 {
-  "name": "zayro/back-end",
-  "description": "este es un paquete backend manejando RestFull",
-  "scripts": {
-    "post-install-cmd": [
-      "@composer dump-autoload --optimize"
-    ]
-  },
-  "require": {
-    "bafs/testify": "^1.0",
-    "firebase/php-jwt": "^4.0"
-  },
-  "authors": [{
-    "name": "Marlon Zayro Arias Vargas",
-    "email": "zayro8905@gmail.com"
-  }],
-  "require-dev": {
-    "php": ">=5.6",
-    "sebastian/phpcpd": "*",
-    "friendsofphp/php-cs-fixer": "^2.0",
-    "phpdocumentor/phpdocumentor": "2.*",
-    "heroku/heroku-buildpack-php": "*",
-    "psy/psysh": "@stable",
-    "phploc/phploc": "^4.0"
+    "name": "zayro/php-pdo-orm",
+    "description": "este es un paquete backend manejando RestFull y orm",
+    "scripts": {
+        "post-install-cmd": [
+            "@composer dump-autoload --optimize"
+        ]
+    },
+    "require": {
+        "bafs/testify": "^1.0",
+        "firebase/php-jwt": "^4.0"
+    },
+    "authors": [{
+        "name": "Marlon Zayro Arias Vargas",
+        "email": "zayro8905@gmail.com"
+    }],
+    "require-dev": {
+        "php": ">=5.6",
+        "sebastian/phpcpd": "*",
+        "friendsofphp/php-cs-fixer": "^2.0",
+        "phpdocumentor/phpdocumentor": "2.*",
+        "heroku/heroku-buildpack-php": "*",
+        "psy/psysh": "@stable",
+        "phploc/phploc": "^4.0"
 
-  },
-  "autoload": {
-    "psr-4": {
-      "config\\": "config/",
-      "library\\": "library/",
-      "app\\": "app/"
+    },
+    "autoload": {
+        "psr-4": {
+            "config\\": "config/",
+            "library\\": "library/",
+            "app\\": "app/"
+        }
     }
-  }
 }
