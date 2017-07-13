@@ -53,32 +53,32 @@ if (isset($method) and $method == 'all_excel') {
 
 if (isset($method) and $method == 'search') {
     $result = $objeto->search($table, $id);
-    echo $result;
+    print $result;
 }
 
 if (isset($method) and $method == 'column') {
     $result = $objeto->column_table($table);
-    echo $result;
+    print $result;
 }
 
 if (isset($method) and $method == 'consult') {
     $result = $objeto->consult($field, $table);
-    echo $result;
+    print $result;
 }
 
 if (isset($method) and $method == 'stored_procedure') {
     $result = $objeto->stored_procedure($procedure, $bdd);
-    echo $result;
+    print $result;
 }
 
 if (isset($method) and $method == 'all_field') {
     $result = $objeto->all_field($table);
-    echo $result;
+    print $result;
 }
 
 if (isset($method) and $method == 'exit') {
     $result = $objeto->exit();
-    echo $result;
+    print $result;
 }
 
 break;
@@ -89,12 +89,12 @@ $receives = json_decode(file_get_contents('php://input'), true);
 
 if (isset($method) and $method == 'sql') {
     $result = $objeto->sql($receives['query']);
-    echo $result;
+    print $result;
 }
 
 if (isset($method) and $method == 'filter') {
     $result = $objeto->filter($receives['field'], $receives['table'], $receives['condition']);
-    echo $result;
+    print $result;
 }
 
 
@@ -106,7 +106,7 @@ if (isset($method) and $method == 'add') {
     }
 
     $data = substr($process, 0, -1);
-    echo $objeto->add($table, $data);
+    print $objeto->add($table, $data);
 }
 
 if (isset($method) and $method == 'add_last_insert') {
@@ -117,11 +117,11 @@ if (isset($method) and $method == 'add_last_insert') {
     }
 
     $data = substr($process, 0, -1);
-    echo $objeto->add_last_insert($table, $data);
+    print $objeto->add_last_insert($table, $data);
 }
 
 if (isset($method) and $method == 'transaction_json') {
-    echo $objeto->transaction_json($receives);
+    print $objeto->transaction_json($receives);
 }
 
 break;
@@ -139,7 +139,7 @@ foreach ($receives as $key => $val) {
 $data = substr($process, 0, -2);
 
 if (isset($method) and $method == 'change') {
-    echo $objeto->change($table, $data, $id);
+    print $objeto->change($table, $data, $id);
 }
 
 break;
@@ -147,11 +147,11 @@ break;
 case 'DELETE':
 
 if (isset($method) and $method == 'remove') {
-    echo $objeto->remove($table, $id);
+    print $objeto->remove($table, $id);
 }
 
 if (isset($method) and $method == 'remove_temp') {
-    echo $objeto->remove_temp($table, $id);
+    print $objeto->remove_temp($table, $id);
 }
 
 break;
