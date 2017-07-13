@@ -1,6 +1,6 @@
 {
     "name": "zayro/php-pdo-orm",
-    "description": "este es un paquete backend manejando RestFull y orm",
+    "description": "este es un paquete de librerias php permitiendo peticiones Rest-Full y Multiples base de datos (orm)",
     "scripts": {
         "post-install-cmd": [
             "@composer dump-autoload --optimize"
@@ -30,5 +30,6 @@
             "library\\": "library/",
             "app\\": "app/"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
