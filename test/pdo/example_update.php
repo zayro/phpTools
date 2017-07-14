@@ -12,5 +12,7 @@ if ($dbCN == false) {
 echo $db->getError(); //Show error description if exist, else is empty.
 
 $db->query("UPDATE TB_USERS SET NAME='wArLeY996',COMPANY='Freelancer MX' WHERE ID=1;");
+
 $getAffectedRows = $db->update('TB_USERS', "NAME='Bling_Grillz',COMPANY='Freelancer MX'", 'ID=2');
+
 $db->disconnect();

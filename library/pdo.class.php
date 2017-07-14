@@ -336,6 +336,10 @@ class DBMS
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
+                $this->err_msg['sql'] = $this->sql;
+                $this->err_msg['success'] = false;                
+            
+           
 
                 return false;
             } catch (Throwable $e) {
@@ -859,4 +863,103 @@ class DBMS
             return false;
         }
     }
+
+
+    public function insertSingle(string $sBaseDatos, string $sTable, array $aData): bool {
+        try {
+            $this->sSql = "INSERT INTO " . $sBaseDatos . "." . $sTable . " (" . implode(', ', array_keys($aData)) . ") VALUES " . $this->argsInsert(count($aData), 1) . ";";
+            return $this->pdo->prepare($this->sSql)->execute(array_values($this->parsingValuesQuery($aData)));
+        } catch (PDOException $e) {
+            $this->err_msg['error'] = $e->getMessage();
+            $this->err_msg['errorInfo'] = $this->pdo->errorInfo();
+            $this->err_msg['errorCode'] = $this->pdo->errorCode();
+
+            return false;
+        } catch (Throwable $e) {
+            $this->err_msg['error'] = $e->getMessage();
+            $this->err_msg['errorInfo'] = $this->pdo->errorInfo();
+            $this->err_msg['errorCode'] = $this->pdo->errorCode();
+
+            return false;
+        }
+    }
+
+    public function insertMultiple(string $sBaseDatos, string $sTable, array $aRows): bool {
+        try {
+            $aInsert = array();
+            $this->sSql = "INSERT INTO " . $sBaseDatos . "." . $sTable . " (" . implode(', ', array_keys($aRows[0])) . ") VALUES " . $this->argsInsert(count($aRows[0]), count($aRows)) . ";";
+
+            foreach ($aRows as $i => $aData) {
+                $aInsert = array_merge_recursive($aInsert, array_values($this->parsingValuesQuery($aData)));
+            }
+
+            return $this->pdo->prepare($this->sSql)->execute($aInsert);
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public function updateSingle(string $sBaseDatos, string $sTable, array $aData, array $aWhere): bool {
+        try {
+            $this->sSql = "UPDATE " . $sBaseDatos . "." . $sTable . " SET " . implode(" = ?, ", array_keys($aData)) . " = ? WHERE " . implode(" = ? AND ", array_keys($aWhere)) . " = ?;";
+            return $this->pdo->prepare($this->sSql)->execute(array_values($this->parsingValuesQuery(array_merge_recursive(array_values($aData), array_values($aWhere)))));
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
+    public function execQueryList() {
+        try {
+            $this->List = array();
+            $stm = $this->pdo->prepare($this->sSql);
+            $stm->execute();
+
+            foreach ($stm->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                $this->List[] = (object) $this->parsingValuesQuery($r);
+            }
+
+            return $list;
+        } catch (Exception $e) {
+            
+        }
+    }
+
+    protected function magicQuotes(string $Text): string {
+        if (!get_magic_quotes_gpc()) {
+            return addslashes($Text);        }
+
+        return $Text;
+    }
+
+    protected function parsingValuesQuery($DataArray): array {
+        try {
+            $Parsing = array();
+
+            foreach ($DataArray as $key => $value) {
+                $nepdo.classw = is_null($value) ? null : (
+                    is_numeric($value) ? (strpos((string) $value, '.') === false ? (int) $value : (float) $value) : (
+                        is_string($value) ? (strlen($value) > 0 ? $this->magicQuotes(utf8_encode($value)) : '') : null
+                    )
+                );
+
+                $Parsing[$key] = $new;
+            }
+
+            return $Parsing;
+        } catch (Exception $e) {
+        }
+    }
+
+    protected function argsInsert(int $iColumnLength, int $iRowLength): string {
+
+        $iLength = $iRowLength * $iColumnLength;
+
+        return implode(',', array_map(
+            function ($el) {
+                return '('.implode(',', $el).')';
+            },
+            array_chunk(array_fill(0, $iLength, '?'), $iColumnLength)
+        ));
+    }
+
 }
