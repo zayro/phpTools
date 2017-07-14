@@ -30,7 +30,7 @@ class DBMS
     public $sql;
 
     protected $err_msg = array();
-    
+
 
      /**
       * Constructor of class - Initializes class and connects to the database.
