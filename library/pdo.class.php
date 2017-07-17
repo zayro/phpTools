@@ -54,7 +54,7 @@ class DBMS
      }
 
     //Initialize class and connects to the database
-    public function Cnxn()
+    public function connect()
     {
         if (in_array($this->database_type, $this->database_types)) {
             try {
@@ -125,7 +125,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Error establishing a database connection (error in params or database not supported).';
+            $this->err_msg['msg'] ='Error: Error establishing a database connection (error in params or database not supported).';
 
             return false;
         }
@@ -160,7 +160,7 @@ class DBMS
                 } elseif ($arg == 'R') {
                     $this->con->rollBack();
                 } else {
-                    $this->err_msg = 'Error: The passed param is wrong! just allow [B=begin, C=commit or R=rollback]';
+                    $this->err_msg['msg'] ='Error: The passed param is wrong! just allow [B=begin, C=commit or R=rollback]';
 
                     return false;
                 }
@@ -178,7 +178,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -233,7 +233,6 @@ class DBMS
     //Iterate over rows
     public function query($sql_statement, $type = 'array', $arg = '')
     {
-        
         $arguments = null;
 
         $total_rows = 0;
@@ -260,20 +259,18 @@ class DBMS
 
                     case 'update':
                    
-                        $sth = $this->con->prepare($this->sql);                       
-
-                            $sth->execute();
-                             $this->count = $sth->rowCount();
+                        $sth = $this->con->prepare($this->sql);
+                        $sth->execute();
+                        $this->count = $sth->rowCount();
 
                         
                         break;
 
                     case 'insert':
                         
-                        $sth = $this->con->prepare($this->sql);                        
-
-                            $sth->execute();
-                             $this->count = $sth->rowCount();
+                        $sth = $this->con->prepare($this->sql);
+                        $sth->execute();
+                        $this->count = $sth->rowCount();
 
                         
                         break;
@@ -307,6 +304,8 @@ class DBMS
                         return $sth->fetch(PDO::FETCH_NAMED);
                     case 'both':
                         return $sth->fetchAll(PDO::FETCH_BOTH);
+                    case 'assoc':
+                        return $sth->fetchAll(PDO::FETCH_ASSOC);                        
                     case 'obj':
                         return $sth->fetchAll(PDO::FETCH_OBJ);
                     case 'class':
@@ -329,14 +328,14 @@ class DBMS
                     case 'call':
                         return false;
                     default:
-                        return $sth->fetchAll(PDO::FETCH_ASSOC);
+                        return $sth->fetchAll(PDO::FETCH_BOTH);
                 }
-            } catch (PDOException $e) {                
+            } catch (PDOException $e) {
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
                 $this->err_msg['sql'] = $this->sql;
-                $this->err_msg['success'] = false;          
+                $this->err_msg['success'] = false;
 
                 return false;
             } catch (Throwable $e) {
@@ -347,7 +346,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
             return false;
         }
     }
@@ -360,7 +359,7 @@ class DBMS
             $unnamed = false;
         }
         if (trim((string) $delimiter) == '') {
-            $this->err_msg = 'Error: Delimiter are required.';
+            $this->err_msg['msg'] ='Error: Delimiter are required.';
 
             return false;
         }
@@ -416,7 +415,7 @@ class DBMS
 
             return true;
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -445,7 +444,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -474,7 +473,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -494,9 +493,7 @@ class DBMS
 
                 return $column;
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();
-                $this->err_msg['errorInfo'] = $this->con->errorInfo();
-                $this->err_msg['errorCode'] = $this->con->errorCode();
+                $this->err_msg['error'] = $e->getMessage();     
 
                 return false;
             } catch (Throwable $e) {
@@ -507,7 +504,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -545,7 +542,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -584,7 +581,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -625,7 +622,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -661,7 +658,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -689,7 +686,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -730,7 +727,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -782,7 +779,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -827,7 +824,7 @@ class DBMS
                 return false;
             }
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
@@ -853,13 +850,13 @@ class DBMS
 
             return true;
         } else {
-            $this->err_msg = 'Error: Connection to database lost.';
+            $this->err_msg['msg'] ='Error: Connection to database lost.';
 
             return false;
         }
     }
 
-    public function insertSingle(string $sBaseDatos, string $sTable, array $aData): bool 
+    public function insertSingle(string $sBaseDatos, string $sTable, array $aData): bool
     {
         try {
             $this->sSql = "INSERT INTO " . $sBaseDatos . "." . $sTable . " (" . implode(', ', array_keys($aData)) . ") VALUES " . $this->argsInsert(count($aData), 1) . ";";
@@ -879,7 +876,8 @@ class DBMS
         }
     }
 
-    public function insertMultiple(string $sBaseDatos, string $sTable, array $aRows): bool {
+    public function insertMultiple(string $sBaseDatos, string $sTable, array $aRows): bool
+    {
         try {
             $aInsert = array();
             $this->sSql = "INSERT INTO " . $sBaseDatos . "." . $sTable . " (" . implode(', ', array_keys($aRows[0])) . ") VALUES " . $this->argsInsert(count($aRows[0]), count($aRows)) . ";";
@@ -894,7 +892,8 @@ class DBMS
         }
     }
 
-    public function updateSingle(string $sBaseDatos, string $sTable, array $aData, array $aWhere): bool {
+    public function updateSingle(string $sBaseDatos, string $sTable, array $aData, array $aWhere): bool
+    {
         try {
             $this->sSql = "UPDATE " . $sBaseDatos . "." . $sTable . " SET " . implode(" = ?, ", array_keys($aData)) . " = ? WHERE " . implode(" = ? AND ", array_keys($aWhere)) . " = ?;";
             return $this->pdo->prepare($this->sSql)->execute(array_values($this->parsingValuesQuery(array_merge_recursive(array_values($aData), array_values($aWhere)))));
@@ -903,7 +902,8 @@ class DBMS
         }
     }
     
-    public function execQueryList() {
+    public function execQueryList()
+    {
         try {
             $List = array();
             $stm = $this->pdo->prepare($this->sSql);
@@ -915,31 +915,29 @@ class DBMS
 
             return $list;
         } catch (Exception $e) {
-            
         }
     }
 
 
     // devuelve el array paseado
-    protected function parsingValuesQuery($aDataParsing): array {
+    protected function parsigetErrorngValuesQuery($aDataParsing): array
+    {
         try {
-
             $aParsing = array();
 
             foreach ($aDataParsing as $key => $value) {
-
-                if(!is_null($value)){
-                    if(is_int($value)){
-                      $v =  (int) $value;
+                if (!is_null($value)) {
+                    if (is_int($value)) {
+                        $v =  (int) $value;
                     }
-                    if(is_string($value)){
-                      $v =  strlen($value) > 0 ? $this->magicQuotes(utf8_encode($value);
+                    if (is_string($value)) {
+                        $v =  strlen($value) > 0 ? $this->magicQuotes(utf8_encode($value)) : '';
                     }
-                    if(is_float($value)){
-                      $v =  (float) $value;
+                    if (is_float($value)) {
+                        $v =  (float) $value;
                     }
-                    if(is_bool($value)){
-                      $v =  (bool) $value;
+                    if (is_bool($value)) {
+                        $v =  (bool) $value;
                     }
                 }
 
@@ -961,15 +959,17 @@ class DBMS
     }
 
     // Si las comillas mágicas están habilitadas devuevle solo texto
-    protected function magicQuotes(string $Text): string {
+    protected function magicQuotes(string $Text): string
+    {
         if (!get_magic_quotes_gpc()) {
-            return addslashes($Text);        }
+            return addslashes($Text);
+        }
 
         return $Text;
-    }        
+    }
 
-    protected function argsInsert(int $iColumnLength, int $iRowLength): string {
-
+    protected function argsInsert(int $iColumnLength, int $iRowLength): string
+    {
         $iLength = $iRowLength * $iColumnLength;
 
         return implode(',', array_map(
@@ -979,5 +979,4 @@ class DBMS
             array_chunk(array_fill(0, $iLength, '?'), $iColumnLength)
         ));
     }
-
 }
