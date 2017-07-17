@@ -101,7 +101,7 @@ Sample result example
 ```shell
 phpdoc template:list
 
-phpdoc -d ../../app/model -t ../../build/docs/library
+phpdoc -d ./test/pdo/pdo_database.class_manual.php -t ./build/docs/library --template="responsive"
 phpdoc -d library  -d app -t build/docs/ --template="responsive"
 
 
@@ -115,7 +115,7 @@ phpdoc -d ../../back/library -f ../../back/library/pdo.class  -t ../../back/libr
 
 ```bash
 
-php-cs-fixer fix back/app/model/admin.model.php --rules=@PSR2,@Symfony--using-cache=no --show-progress=evaluating
+php-cs-fixer fix back/app/model/admin.model.php --rules=@PSR2,@Symfony --using-cache=no --show-progress=evaluating
 
 
 php-cs-fixer fix ../../app --rules=@PSR2,@Symfony --using-cache=no --show-progress=evaluating
