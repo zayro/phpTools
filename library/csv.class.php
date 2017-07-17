@@ -72,7 +72,6 @@ class csv extends connect
     {
         $rows = $this->query($sql);
 
-
         if ($rows === false) {
             $result = array(
         'sql' => $this->sql,
@@ -105,11 +104,10 @@ class csv extends connect
         );
         }
 
-
         return json_encode($result);
         $this->disconnect();
 
-        #exit;
+        //exit;
     }
 
     /**

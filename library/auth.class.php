@@ -10,9 +10,9 @@ class auth
     private static $encrypt = ['HS256'];
     private static $aud = null;
 
-/**
-* CREA EL TOKEN
-*/
+    /**
+     * CREA EL TOKEN.
+     */
     public static function SignIn($data)
     {
         $time = time();
@@ -27,9 +27,9 @@ class auth
         return JWT::encode($token, self::$secret_key);
     }
 
-/**
-* CHEKEA EL TOKEN SI ES VALIDO
-*/
+    /**
+     * CHEKEA EL TOKEN SI ES VALIDO.
+     */
     public static function Check($token)
     {
         if (empty($token)) {
@@ -42,8 +42,6 @@ class auth
             self::$encrypt
         );
 
-
-
         if ($decode->aud !== self::Aud()) {
             throw new Exception('Invalid user logged in.');
         }
@@ -51,9 +49,9 @@ class auth
         return  $decode;
     }
 
-/**
-* DESENCRIPTA LOS DATOS DEL TOKEN
-*/
+    /**
+     * DESENCRIPTA LOS DATOS DEL TOKEN.
+     */
     public static function GetData($token)
     {
         return JWT::decode(
@@ -82,8 +80,8 @@ class auth
     }
 
 /**
-* Get hearder Authorization.
-*/
+ * Get hearder Authorization.
+ */
 public function getAuthorizationHeader()
 {
     $headers = null;

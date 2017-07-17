@@ -233,10 +233,10 @@ class DBMS
     //Iterate over rows
     public function query($sql_statement, $type = 'array', $arg = '')
     {
-        //$transactionable = false;
+        
         $arguments = null;
-        $total_rows = 0;
 
+        $total_rows = 0;
 
         if ($this->con != null) {
             try {
@@ -257,25 +257,25 @@ class DBMS
                     case 'delete':
                         echo 'Deprecated... You need use delete to call method.';
                         break;
+
                     case 'update':
-                   //$transactionable = true;
-                        $sth = $this->con->prepare($this->sql);
-                        //$this->con->beginTransaction();
+                   
+                        $sth = $this->con->prepare($this->sql);                       
 
                             $sth->execute();
                              $this->count = $sth->rowCount();
 
-                        //$this->con->commit();
+                        
                         break;
+
                     case 'insert':
-                        //$transactionable = true;
-                        $sth = $this->con->prepare($this->sql);
-                        //$this->con->beginTransaction();
+                        
+                        $sth = $this->con->prepare($this->sql);                        
 
                             $sth->execute();
                              $this->count = $sth->rowCount();
 
-                        //$this->con->commit();
+                        
                         break;
                     case 'call':
                         echo 'Deprecated... You need use query_secure to call procedures.';
@@ -331,15 +331,12 @@ class DBMS
                     default:
                         return $sth->fetchAll(PDO::FETCH_ASSOC);
                 }
-            } catch (PDOException $e) {
-                //if($transactionable) $this->con->rollback();
+            } catch (PDOException $e) {                
                 $this->err_msg['error'] = $e->getMessage();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
                 $this->err_msg['sql'] = $this->sql;
-                $this->err_msg['success'] = false;                
-            
-           
+                $this->err_msg['success'] = false;          
 
                 return false;
             } catch (Throwable $e) {
@@ -351,7 +348,6 @@ class DBMS
             }
         } else {
             $this->err_msg = 'Error: Connection to database lost.';
-
             return false;
         }
     }
@@ -413,7 +409,6 @@ class DBMS
                     $this->err_msg['error'] = $e->getMessage();
                     $this->err_msg['errorInfo'] = $this->con->errorInfo();
                     $this->err_msg['errorCode'] = $this->con->errorCode();
-
 
                     return false;
                 }
@@ -864,8 +859,8 @@ class DBMS
         }
     }
 
-
-    public function insertSingle(string $sBaseDatos, string $sTable, array $aData): bool {
+    public function insertSingle(string $sBaseDatos, string $sTable, array $aData): bool 
+    {
         try {
             $this->sSql = "INSERT INTO " . $sBaseDatos . "." . $sTable . " (" . implode(', ', array_keys($aData)) . ") VALUES " . $this->argsInsert(count($aData), 1) . ";";
             return $this->pdo->prepare($this->sSql)->execute(array_values($this->parsingValuesQuery($aData)));
@@ -910,12 +905,12 @@ class DBMS
     
     public function execQueryList() {
         try {
-            $this->List = array();
+            $List = array();
             $stm = $this->pdo->prepare($this->sSql);
             $stm->execute();
 
             foreach ($stm->fetchAll(PDO::FETCH_ASSOC) as $r) {
-                $this->List[] = (object) $this->parsingValuesQuery($r);
+                $List[] = (object) $this->parsingValuesQuery($r);
             }
 
             return $list;
@@ -924,31 +919,54 @@ class DBMS
         }
     }
 
+
+    // devuelve el array paseado
+    protected function parsingValuesQuery($aDataParsing): array {
+        try {
+
+            $aParsing = array();
+
+            foreach ($aDataParsing as $key => $value) {
+
+                if(!is_null($value)){
+                    if(is_int($value)){
+                      $v =  (int) $value;
+                    }
+                    if(is_string($value)){
+                      $v =  strlen($value) > 0 ? $this->magicQuotes(utf8_encode($value);
+                    }
+                    if(is_float($value)){
+                      $v =  (float) $value;
+                    }
+                    if(is_bool($value)){
+                      $v =  (bool) $value;
+                    }
+                }
+
+
+                /*
+                $v = is_null($value) ? null : (
+                    is_numeric($value) ? (strpos((string) $value, '.') === false ? (int) $value : (float) $value) : (
+                        is_string($value) ? (strlen($value) > 0 ? $this->magicQuotes(utf8_encode($value)) : '') : null
+                    )
+                );
+                */
+
+                $aParsing[$key] = $v;
+            }
+
+            return $aParsing;
+        } catch (Exception $e) {
+        }
+    }
+
+    // Si las comillas mágicas están habilitadas devuevle solo texto
     protected function magicQuotes(string $Text): string {
         if (!get_magic_quotes_gpc()) {
             return addslashes($Text);        }
 
         return $Text;
-    }
-
-    protected function parsingValuesQuery($DataArray): array {
-        try {
-            $Parsing = array();
-
-            foreach ($DataArray as $key => $value) {
-                $nepdo.classw = is_null($value) ? null : (
-                    is_numeric($value) ? (strpos((string) $value, '.') === false ? (int) $value : (float) $value) : (
-                        is_string($value) ? (strlen($value) > 0 ? $this->magicQuotes(utf8_encode($value)) : '') : null
-                    )
-                );
-
-                $Parsing[$key] = $new;
-            }
-
-            return $Parsing;
-        } catch (Exception $e) {
-        }
-    }
+    }        
 
     protected function argsInsert(int $iColumnLength, int $iRowLength): string {
 
