@@ -15,7 +15,7 @@ $tf->beforeEach(function ($tf) {
 $tf->test('Testing the construct() method', function ($tf) {
     $dbms = $tf->data->dbms;
 
-    $tf->assert($dbms->Cnxn(), 'prueba de conexion:'.$dbms->getError());
+    $tf->assert($dbms->connect(), 'prueba de conexion:'.$dbms->getError());
 });
 
 $tf->test('Some tests', function ($tf) {

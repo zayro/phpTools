@@ -134,12 +134,12 @@ class DBMS
     //Retrieve connection properties
     public function properties()
     {
-        echo '<span style="display:block;color:#267F00;background:#F4FFEF;border:2px solid #267F00;padding:2px 4px 2px 4px;margin-bottom:5px;">';
+        print '<span style="display:block;color:#267F00;background:#F4FFEF;border:2px solid #267F00;padding:2px 4px 2px 4px;margin-bottom:5px;">';
         print_r('<b>DATABASE:</b>&nbsp;'.$this->con->getAttribute(PDO::ATTR_DRIVER_NAME).'&nbsp;'.$this->con->getAttribute(PDO::ATTR_SERVER_VERSION).'<br/>');
         print_r('<b>STATUS:</b>&nbsp;'.$this->con->getAttribute(PDO::ATTR_CONNECTION_STATUS).'<br/>');
         print_r('<b>CLIENT:</b><br/>'.$this->con->getAttribute(PDO::ATTR_CLIENT_VERSION).'<br/>');
         print_r('<b>INFORMATION:</b><br/>'.$this->con->getAttribute(PDO::ATTR_SERVER_INFO));
-        echo '</span>';
+        print '</span>';
     }
 
     //Retrieve all drivers capables
@@ -189,7 +189,6 @@ class DBMS
     {
         $query = strtolower(trim($query));
         $instruction = substr($query, 0, 9);
-
         if ($instruction == 'delimiter') {
             return 'delimiter';
         }
@@ -205,6 +204,14 @@ class DBMS
         }
         if ($instruction == 'create') {
             return 'create';
+        }
+        $instruction = substr($query, 0, 8);
+        if ($instruction == 'truncate') {
+            return 'truncate';
+        }
+        $instruction = substr($query, 0, 3);
+        if ($instruction == 'use') {
+            return 'use';
         }
         $instruction = substr($query, 0, 5);
         if ($instruction == 'alter') {
@@ -254,28 +261,19 @@ class DBMS
 
                 switch ($type) {
                     case 'delete':
-                        echo 'Deprecated... You need use delete to call method.';
+                        $this->err_msg['error'] =  'Deprecated... You need use delete to call method.';
                         break;
 
                     case 'update':
-                   
-                        $sth = $this->con->prepare($this->sql);
-                        $sth->execute();
-                        $this->count = $sth->rowCount();
-
-                        
+                        $this->err_msg['error'] =  'Deprecated... You need use update to call method.';
                         break;
 
                     case 'insert':
-                        
-                        $sth = $this->con->prepare($this->sql);
-                        $sth->execute();
-                        $this->count = $sth->rowCount();
-
-                        
+                        $this->err_msg['error'] =  'Deprecated... You need use insert to call method.';
                         break;
+                                      
                     case 'call':
-                        echo 'Deprecated... You need use query_secure to call procedures.';
+                        $this->err_msg['error'] =  'Deprecated... You need use query_secure o execute to call procedures.';
                         break;
                     default:
 
@@ -295,40 +293,41 @@ class DBMS
                         break;
                 }
 
-                if ($arg == '') {
-                    $arg = $type;
-                }
-
-                switch ($arg) {
+                switch ($type) {
                     case 'named':
-                        return $sth->fetch(PDO::FETCH_NAMED);
+                        return $sth->fetchAll(PDO::FETCH_NAMED);
                     case 'both':
                         return $sth->fetchAll(PDO::FETCH_BOTH);
                     case 'assoc':
-                        return $sth->fetchAll(PDO::FETCH_ASSOC);                        
+                        return $sth->fetchAll(PDO::FETCH_ASSOC);
                     case 'obj':
                         return $sth->fetchAll(PDO::FETCH_OBJ);
-                    case 'class':
-                        return $sth->fetchAll(PDO::FETCH_CLASS, $arg);
-                    case 'func':
-                        return $sth->fetchAll(PDO::FETCH_FUNC, $arg);
-                    case 'count':
-                        $objNum = $sth->fetch(PDO::FETCH_NUM);
-
-                        return isset($objNum[0]) ? intval($objNum[0]) : 0;
-                    case 'delete':
-                    case 'update':
+					case 'class':
+						return $sth->fetchAll(PDO::FETCH_CLASS, $arg);
+					case 'func':
+						return $sth->fetchAll(PDO::FETCH_FUNC, $arg);
+					case 'count':
+						$objNum = $sth->fetch(PDO::FETCH_NUM);
+						return isset($objNum[0]) ? intval($objNum[0]) : 0;
                     case 'exec':
+                    case 'truncate':
+                    return true;
                     case 'drop':
                     case 'create':
+                    return true;
+                    case 'use':
                     case 'alter':
                         return $this->count;
                     case 'insert':
-                        return $this->count;
+                        return false;
+                    case 'update':
+                        return false;
+                    case 'delete':
+                        return false;
                     case 'call':
                         return false;
                     default:
-                        return $sth->fetchAll(PDO::FETCH_BOTH);
+                        return $sth->fetchAll(PDO::FETCH_ASSOC);
                 }
             } catch (PDOException $e) {
                 $this->err_msg['error'] = $e->getMessage();
@@ -393,10 +392,14 @@ class DBMS
 
                     if ($fetch_rows) {
                         return $obj->fetchAll(PDO::FETCH_ASSOC);
-                    } //PDO::FETCH_OBJ || PDO::FETCH_ARRAY || PDO::FETCH_ASSOC
-            if (is_numeric($this->con->lastInsertId())) {
-                return $this->con->lastInsertId();
-            }
+                        //PDO::FETCH_OBJ || PDO::FETCH_ARRAY || PDO::FETCH_ASSOC
+                    } else {
+                        return true;
+                    }
+                    
+                    if (is_numeric($this->con->lastInsertId())) {
+                        return $this->con->lastInsertId();
+                    }
                 } catch (PDOException $e) {
                     $this->err_msg['error'] = $e->getMessage();
                     $this->err_msg['errorInfo'] = $this->con->errorInfo();
@@ -493,7 +496,7 @@ class DBMS
 
                 return $column;
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();     
+                $this->err_msg['error'] = $e->getMessage();
 
                 return false;
             } catch (Throwable $e) {
@@ -601,12 +604,7 @@ class DBMS
                     $this->sql = $sql;
                     $result = $this->con->exec($sql);
                 }
-
-                $this->err_msg['errorInfo'] = $this->con->errorInfo();
-                $this->err_msg['errorCode'] = $this->con->errorCode();
-
-                $return = array($sql, $result);
-
+                
                 return $result;
             } catch (PDOException  $e) {
                 $this->err_msg['error'] = $e->getMessage();
@@ -833,13 +831,13 @@ class DBMS
     //Get the latest error ocurred in the connection
     public function getError()
     {
-        return $this->err_msg;
+        return !empty($this->err_msg) ? $this->err_msg : null;
     }
 
     //Get the latest sql execute
     public function getSql()
     {
-        return trim($this->sql) != '' ? $this->sql : '';
+        return trim($this->sql) != '' ? $this->sql : null;
     }
 
     //Disconnect database
@@ -859,18 +857,25 @@ class DBMS
     public function insertSingle(string $sBaseDatos, string $sTable, array $aData): bool
     {
         try {
-            $this->sSql = "INSERT INTO " . $sBaseDatos . "." . $sTable . " (" . implode(', ', array_keys($aData)) . ") VALUES " . $this->argsInsert(count($aData), 1) . ";";
-            return $this->pdo->prepare($this->sSql)->execute(array_values($this->parsingValuesQuery($aData)));
+            $this->sql = "INSERT INTO " . $sBaseDatos . "." . $sTable . " (" . implode(', ', array_keys($aData)) . ") VALUES " . $this->argsInsert(count($aData), 1) . ";";
+                
+            $parse = $this->parsingValuesQuery($aData);
+
+            $assoc_values = array_values($parse);
+
+            $stm = $this->con->prepare($this->sql);
+
+            return $stm->execute($assoc_values);
         } catch (PDOException $e) {
             $this->err_msg['error'] = $e->getMessage();
-            $this->err_msg['errorInfo'] = $this->pdo->errorInfo();
-            $this->err_msg['errorCode'] = $this->pdo->errorCode();
+            $this->err_msg['errorInfo'] = $this->con->errorInfo();
+            $this->err_msg['errorCode'] = $this->con->errorCode();
 
             return false;
         } catch (Throwable $e) {
             $this->err_msg['error'] = $e->getMessage();
-            $this->err_msg['errorInfo'] = $this->pdo->errorInfo();
-            $this->err_msg['errorCode'] = $this->pdo->errorCode();
+            $this->err_msg['errorInfo'] = $this->con->errorInfo();
+            $this->err_msg['errorCode'] = $this->con->errorCode();
 
             return false;
         }
@@ -880,13 +885,13 @@ class DBMS
     {
         try {
             $aInsert = array();
-            $this->sSql = "INSERT INTO " . $sBaseDatos . "." . $sTable . " (" . implode(', ', array_keys($aRows[0])) . ") VALUES " . $this->argsInsert(count($aRows[0]), count($aRows)) . ";";
+            $this->sql = "INSERT INTO " . $sBaseDatos . "." . $sTable . " (" . implode(', ', array_keys($aRows[0])) . ") VALUES " . $this->argsInsert(count($aRows[0]), count($aRows)) . ";";
 
             foreach ($aRows as $i => $aData) {
                 $aInsert = array_merge_recursive($aInsert, array_values($this->parsingValuesQuery($aData)));
             }
 
-            return $this->pdo->prepare($this->sSql)->execute($aInsert);
+            return $this->con->prepare($this->sql)->execute($aInsert);
         } catch (Exception $e) {
             return false;
         }
@@ -895,8 +900,9 @@ class DBMS
     public function updateSingle(string $sBaseDatos, string $sTable, array $aData, array $aWhere): bool
     {
         try {
-            $this->sSql = "UPDATE " . $sBaseDatos . "." . $sTable . " SET " . implode(" = ?, ", array_keys($aData)) . " = ? WHERE " . implode(" = ? AND ", array_keys($aWhere)) . " = ?;";
-            return $this->pdo->prepare($this->sSql)->execute(array_values($this->parsingValuesQuery(array_merge_recursive(array_values($aData), array_values($aWhere)))));
+            $this->sql = "UPDATE " . $sBaseDatos . "." . $sTable . " SET " . implode(" = ?, ", array_keys($aData)) . " = ? WHERE " . implode(" = ? AND ", array_keys($aWhere)) . " = ?;";
+            
+            return $this->con->prepare($this->sql)->execute(array_values($this->parsingValuesQuery(array_merge_recursive(array_values($aData), array_values($aWhere)))));
         } catch (Exception $e) {
             return false;
         }
@@ -906,7 +912,7 @@ class DBMS
     {
         try {
             $List = array();
-            $stm = $this->pdo->prepare($this->sSql);
+            $stm = $this->con->prepare($this->sql);
             $stm->execute();
 
             foreach ($stm->fetchAll(PDO::FETCH_ASSOC) as $r) {
@@ -920,7 +926,7 @@ class DBMS
 
 
     // devuelve el array paseado
-    protected function parsigetErrorngValuesQuery($aDataParsing): array
+    protected function parsingValuesQuery($aDataParsing): array
     {
         try {
             $aParsing = array();
