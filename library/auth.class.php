@@ -30,7 +30,43 @@ class auth
     /**
      * CHEKEA EL TOKEN SI ES VALIDO.
      */
-    public static function Check($token)
+    public static function Check($token)<?php
+
+namespace clase;
+
+class Cifrado {
+    public function __construct() {
+        
+    }    
+
+    public static function hashSha1(string $sContrasenia): string {
+        return sha1($sContrasenia);
+    }
+
+    public static function generateSalt() {
+        $iSaltLength = 10;
+        $sCharsetSalt = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][{};:?.>,<!@#$%^&*()-_=+|';
+        $sRandString = "";
+
+        for ($i = 0; $i < $iSaltLength; $i++) {
+            $sRandString .= $sCharsetSalt[mt_rand(0, strlen($sCharsetSalt) - 1)];
+        }
+
+        return $sRandString;
+    }
+
+    public static function generatePassword() : string {
+        $iPasswordLength = 8;
+        $sCharsetPassword = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][{};:?.>,<!@#$%^&*()-_=+|';
+        $sRandString = '';
+
+        for ($i = 0; $i < $iPasswordLength; $i++) {
+            $sRandString .= $sCharsetPassword[mt_rand(0, strlen($sCharsetPassword) - 1)];
+        }
+
+        return $sRandString;
+    }
+}
     {
         if (empty($token)) {
             throw new Exception('Invalid token is empty.');
@@ -79,42 +115,42 @@ class auth
         return sha1($aud);
     }
 
-/**
- * Get hearder Authorization.
- */
-public function getAuthorizationHeader()
-{
-    $headers = null;
-    if (isset($_SERVER['Authorization'])) {
-        $headers = trim($_SERVER['Authorization']);
-    } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) { //Nginx or fast CGI
+    /**
+     * Get hearder Authorization.
+     */
+    public function getAuthorizationHeader()
+    {
+        $headers = null;
+        if (isset($_SERVER['Authorization'])) {
+            $headers = trim($_SERVER['Authorization']);
+        } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) { //Nginx or fast CGI
             $headers = trim($_SERVER['HTTP_AUTHORIZATION']);
-    } elseif (function_exists('apache_request_headers')) {
-        $requestHeaders = apache_request_headers();
+        } elseif (function_exists('apache_request_headers')) {
+            $requestHeaders = apache_request_headers();
             // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
             $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
             //print_r($requestHeaders);
             if (isset($requestHeaders['Authorization'])) {
                 $headers = trim($requestHeaders['Authorization']);
             }
-    }
-
-    return $headers;
-}
-
-/**
- * get access token from header.
- */
-public function getBearerToken()
-{
-    $headers = $this->getAuthorizationHeader();
-    // HEADER: Get the access token from the header
-    if (!empty($headers)) {
-        if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-            return $matches[1];
         }
+
+        return $headers;
     }
 
-    return null;
-}
+    /**
+     * get access token from header.
+     */
+    public function getBearerToken()
+    {
+        $headers = $this->getAuthorizationHeader();
+        // HEADER: Get the access token from the header
+        if (!empty($headers)) {
+            if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
+                return $matches[1];
+            }
+        }
+
+        return null;
+    }
 }

@@ -44,6 +44,7 @@ $query_create_table = "
 CREATE TABLE TB_DEMO (
   ID INT NOT NULL AUTO_INCREMENT,
   NAME VARCHAR(100) NOT NULL,
+  PHONE INT(11) NULL,
   ADDRESS VARCHAR(100) NOT NULL,
   COMPANY VARCHAR(100) NOT NULL,
   PRIMARY KEY (ID));
@@ -63,7 +64,7 @@ print "<br>";print "<hr>";print "<br>";
  * @example How To Insert Rows.
  *******************************************************/
 ///Option 1:
-$result = $db->query("INSERT INTO TB_DEMO (NAME, ADDRESS, COMPANY) VALUES ('Evert Ulises German', 'Internet #996 Culiacan Sinaloa', 'Freelancer');");
+$result = $db->query("INSERT INTO TB_DEMO (NAME, PHONE, ADDRESS, COMPANY) VALUES ('Evert Ulises German', 10,  'Internet #996 Culiacan Sinaloa', 'Freelancer');");
 print $db->getSql();
 print "<br>";print "<hr>";print "<br>";
 
@@ -71,7 +72,7 @@ print "<br>";print "<hr>";print "<br>";
 
 
 ///Option 2: Method insert(table_name, data_to_insert[field=data]);
-$result = $db->insert('TB_DEMO', "NAME='Evert Ulises German',ADDRESS='Tetameche #3035 Culiacan Sin. Mexico',COMPANY='Freelancer'");
+$result = $db->insert('TB_DEMO', "NAME='Evert Ulises German', PHONE=10, ADDRESS='Tetameche #3035 Culiacan Sin. Mexico',COMPANY='Freelancer'");
 print $db->getSql();
 print "<br>";print "<hr>";print "<br>";
 // $result have the inserted id or false if operation fail. IMPORTANT: For getting the currently id inserted is neccessary define the id field how primary key autoincrement.
@@ -94,12 +95,24 @@ $getAffectedRows = $db->update('TB_DEMO', "NAME='wArLeY996',COMPANY='Freelancer 
  *
  * @example How To Retrieve Result Set.
  *******************************************************/
-$rs = $db->query('SELECT NAME, ADDRESS FROM TB_DEMO', 'array');
-foreach ($rs as $row) {
-    $tmp_name = $row['NAME'];
-    $tmp_address = $row['ADDRESS'];
-    print "The user $tmp_name lives in: $tmp_address<br/>";
-}
+$row = $db->query('SELECT * FROM TB_DEMO', 'assoc');
+print_r($row);
+
+
+print "<br>";print "<hr>";print "<br>";
+
+$row = $db->query('SELECT * FROM TB_DEMO', 'both');
+print_r($row);
+print "<br>";print "<hr>";print "<br>";
+
+$row = $db->query('SELECT * FROM TB_DEMO', 'obj');
+print_r($row);
+print "<br>";print "<hr>";print "<br>";
+
+$row = $db->query('SELECT * FROM TB_DEMO', 'parsing');
+print_r($row);
+print "<br>";print "<hr>";print "<br>";
+
 
 /*
 ******************************************************

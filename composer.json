@@ -2,13 +2,27 @@
     "name": "zayro/php-pdo-orm",
     "description": "este es un paquete de librerias php permitiendo peticiones Rest-Full y Multiples base de datos (orm)",
     "scripts": {
+        "fix-code": [
+            "vendor/bin/php-cs-fixer fix --config-file=.php_cs",
+            "bin/php-formatter f:h:f . --exclude=vendor --verbose",
+            "bin/php-formatter f:s:f . --exclude=vendor --verbose",
+            "bin/php-formatter f:u:s . --exclude=vendor --verbose"
+        ],
+        "preformatter": "php-cs-fixer fix ./library/ --rules=@PSR2,@Symfony --dry-run",
+        "formatter": [
+            "php-cs-fixer fix ./library/system.class.php --rules=@PSR2,@Symfony,@PHP71Migration --using-cache=no --show-progress=evaluating"
+        ],
+        "documentation": "phpdoc -d ./library/  -d app -t ./build/docs/ --template='responsive'",
         "post-install-cmd": [
             "@composer dump-autoload --optimize"
-        ]
+        ],
+        "test": "vendor/bin/phpunit"
     },
     "require": {
         "bafs/testify": "^1.0",
-        "firebase/php-jwt": "^4.0"
+        "firebase/php-jwt": "^4.0",
+        "phpmailer/phpmailer": "dev-master",
+        "codeguy/upload": "dev-master"
     },
     "authors": [{
         "name": "Marlon Zayro Arias Vargas",
@@ -22,9 +36,15 @@
         "heroku/heroku-buildpack-php": "*",
         "psy/psysh": "@stable",
         "phploc/phploc": "^4.0"
-
     },
     "autoload": {
+        "psr-4": {
+            "php-pdo-orm\\config\\": "config/",
+            "php-pdo-orm\\library\\": "library/",
+            "php-pdo-orm\\app\\": "app/"
+        }
+    },
+    "autoload-dev": {
         "psr-4": {
             "config\\": "config/",
             "library\\": "library/",

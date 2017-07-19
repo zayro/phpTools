@@ -118,6 +118,6 @@ phpdoc -d ../../back/library -f ../../back/library/pdo.class  -t ../../back/libr
 php-cs-fixer fix back/app/model/admin.model.php --rules=@PSR2,@Symfony --using-cache=no --show-progress=evaluating
 
 
-php-cs-fixer fix ../../app --rules=@PSR2,@Symfony --using-cache=no --show-progress=evaluating
+php-cs-fixer fix ./library --rules=@PSR2,@Symfony --using-cache=no --show-progress=evaluating
 
 ```
