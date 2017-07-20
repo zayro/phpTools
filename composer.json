@@ -1,7 +1,7 @@
 {
     "name": "zayro/php-pdo-orm",
     "description": "este es un paquete de librerias php permitiendo peticiones Rest-Full y Multiples base de datos (orm)",
-    "type": "composer-plugin",
+    "type": "library",
     "license": "MIT",
     "scripts": {
         "fix-code": [
