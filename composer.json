@@ -52,6 +52,6 @@
             "library\\": "library/",
             "app\\": "app/"
         }
-    },
-    "minimum-stability": "dev"
+    }
+
 }
