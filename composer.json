@@ -41,9 +41,9 @@
     },
     "autoload": {
         "psr-4": {
-            "php-pdo-orm\\config\\": "config/",
-            "php-pdo-orm\\library\\": "library/",
-            "php-pdo-orm\\app\\": "app/"
+            "PhPdOrm\\config\\": "config/",
+            "PhPdOrm\\library\\": "library/",
+            "PhPdOrm\\app\\": "app/"
         }
     },
     "autoload-dev": {
