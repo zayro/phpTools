@@ -1,8 +1,8 @@
 <?php
 
-require '../../system.class.php';
+require_once __DIR__.'/../../vendor/autoload.php';
 
-use library\system;
+use PhPdOrm\system;
 
 $instance = new system();
 
