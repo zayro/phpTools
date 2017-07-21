@@ -17,7 +17,6 @@ use Throwable;
 class DBMS
 {
     private $database_types = array('sqlite2', 'sqlite3', 'sqlsrv', 'mssql', 'mysql', 'pg', 'ibm', 'dblib', 'odbc', 'oracle', 'ifmx', 'fbd');
-
     private $host;
     private $database;
     private $user;
@@ -27,9 +26,7 @@ class DBMS
     private $root_mdb;
     private $con;
     private $count;
-
     public $sql;
-
     protected $err_msg = array();
 
     /**
@@ -98,8 +95,7 @@ class DBMS
                     default:
                         $this->con = null;
                         break;
-                }
-
+                } //$this->database_type
                 $this->con->exec('SET NAMES UTF8');
                 $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 //$this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
@@ -110,21 +106,22 @@ class DBMS
 
                 return $this->con;
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 //$this->err_msg['errorCode'] = $this->con->errorCode();
                 //eval(\Psy\sh());
-
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 /*
                 $this->err_msg["errorInfo"] = $this->con->errorInfo();
                 $this->err_msg["errorCode"] = $this->con->errorCode();
                 */
-
                 return false;
             }
-        } else {
+        } //in_array( $this->database_type, $this->database_types )
+        else {
             $this->err_msg['msg'] = 'Error: Error establishing a database connection (error in params or database not supported).';
 
             return false;
@@ -155,29 +152,35 @@ class DBMS
             try {
                 if ($arg == 'B') {
                     $this->con->beginTransaction();
-                } elseif ($arg == 'C') {
+                } //$arg == 'B'
+                elseif ($arg == 'C') {
                     $this->con->commit();
-                } elseif ($arg == 'R') {
+                } //$arg == 'C'
+                elseif ($arg == 'R') {
                     $this->con->rollBack();
-                } else {
+                } //$arg == 'R'
+                else {
                     $this->err_msg['msg'] = 'Error: The passed param is wrong! just allow [B=begin, C=commit or R=rollback]';
 
                     return false;
                 }
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -191,43 +194,42 @@ class DBMS
         $instruction = substr($query, 0, 9);
         if ($instruction == 'delimiter') {
             return 'delimiter';
-        }
+        } //$instruction == 'delimiter'
         $instruction = substr($query, 0, 6);
         if ($instruction == 'delete') {
             return 'delete';
-        }
+        } //$instruction == 'delete'
         if ($instruction == 'insert') {
             return 'insert';
-        }
+        } //$instruction == 'insert'
         if ($instruction == 'update') {
             return 'update';
-        }
+        } //$instruction == 'update'
         if ($instruction == 'create') {
             return 'create';
-        }
+        } //$instruction == 'create'
         $instruction = substr($query, 0, 8);
         if ($instruction == 'truncate') {
             return 'truncate';
-        }
+        } //$instruction == 'truncate'
         $instruction = substr($query, 0, 3);
         if ($instruction == 'use') {
             return 'use';
-        }
+        } //$instruction == 'use'
         $instruction = substr($query, 0, 5);
         if ($instruction == 'alter') {
             return 'alter';
-        }
+        } //$instruction == 'alter'
         $instruction = substr($query, 0, 4);
         if ($instruction == 'exec') {
             return 'exec';
-        }
+        } //$instruction == 'exec'
         if ($instruction == 'call') {
             return 'call';
-        }
+        } //$instruction == 'call'
         if ($instruction == 'drop') {
             return 'drop';
-        }
-
+        } //$instruction == 'drop'
         return '';
     }
 
@@ -241,92 +243,80 @@ class DBMS
     public function query($sql_statement, $type = '', $arg = '')
     {
         $arguments = null;
-
         $total_rows = 0;
-
         if ($this->con != null) {
             try {
                 $this->sql = $sql_statement;
-
-                $evalStatement = trim($this->evalStatement($this->sql));                
-
+                $evalStatement = trim($this->evalStatement($this->sql));
                 switch ($evalStatement) {
-                    case 'delete':                        
+                    case 'delete':
                         throw new Exception('Deprecated... You need use delete to call method.');
                         break;
-
                     case 'update':
                         throw new Exception('Deprecated... You need use update to call method.');
                         break;
-
-                    case 'insert':                        
-                         throw new Exception('Deprecated... You need use insert to call');
+                    case 'insert':
+                        throw new Exception('Deprecated... You need use insert to call');
                         break;
-
                     case 'call':
-                    throw new Exception('Deprecated... You need use query_secure o execute to call procedures.');
-                        
+                        throw new Exception('Deprecated... You need use query_secure o execute to call procedures.');
                         break;
                     default:
-
                         $sth = $this->con->prepare($this->sql);
-
                         if (!$sth) {
                             throw new Exception($this->con->errorInfo());
-                        }
-                       
-                       $sth->execute();                       
-
+                        } //!$sth
+                        $sth->execute();
                         $this->count = $sth->rowCount();
                         break;
-                }
-
+                } //$evalStatement
                 switch ($type) {
                     case 'parsing':
-                    $list = array();
-                    foreach ($sth->fetchAll(PDO::FETCH_ASSOC) as $field) {
-                    $list[] = (object) $this->parsingValuesQuery($field);
-                    }                        
-                    return $list;
+                        $list = array();
+                        foreach ($sth->fetchAll(PDO::FETCH_ASSOC) as $field) {
+                            $list[] = (object) $this->parsingValuesQuery($field);
+                        } //$sth->fetchAll( PDO::FETCH_ASSOC ) as $field
+                        return $list;
                     case 'named':
-                        return  $sth->fetch(PDO::FETCH_NAMED);                    
+                        return $sth->fetch(PDO::FETCH_NAMED);
                     case 'both':
-                        return  $sth->fetch(PDO::FETCH_BOTH);                        
+                        return $sth->fetch(PDO::FETCH_BOTH);
                     case 'assoc':
-                        return $sth->fetch(PDO::FETCH_ASSOC);                         
+                        return $sth->fetch(PDO::FETCH_ASSOC);
                     case 'obj':
-                        return $sth->fetch(PDO::FETCH_OBJ);                                                                
+                        return $sth->fetch(PDO::FETCH_OBJ);
                     case 'namedAll':
-                        return  $sth->fetchAll(PDO::FETCH_NAMED);
+                        return $sth->fetchAll(PDO::FETCH_NAMED);
                     case 'bothAll':
-                        return  $sth->fetchAll(PDO::FETCH_BOTH);                        
+                        return $sth->fetchAll(PDO::FETCH_BOTH);
                     case 'assocAll':
-                        return $sth->fetchAll(PDO::FETCH_ASSOC);                         
+                        return $sth->fetchAll(PDO::FETCH_ASSOC);
                     case 'objAll':
-                        return $sth->fetchAll(PDO::FETCH_OBJ);                        
+                        return $sth->fetchAll(PDO::FETCH_OBJ);
                     case 'class':
                         return $sth->fetch(PDO::FETCH_CLASS, $arg);
                     case 'func':
                         return $sth->fetch(PDO::FETCH_FUNC, $arg);
                     case 'count':
                         $objNum = $sth->fetch(PDO::FETCH_NUM);
-                        return isset($objNum[0]) ? intval($objNum[0]) : 0;                    
+
+                        return isset($objNum[0]) ? intval($objNum[0]) : 0;
                     case 'truncate':
                         return true;
                     case 'drop':
-                            return true;
+                        return true;
                     case 'create':
-                    return true;
+                        return true;
                     case 'use':
                         return true;
                     case 'alter':
                         return $this->count;
-                   default:
+                    default:
                         return true;
-                }
-
+                } //$type
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();                
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
                 $this->err_msg['sql'] = $this->sql;
@@ -334,13 +324,15 @@ class DBMS
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -353,59 +345,63 @@ class DBMS
         $this->sql = $sql_statement;
         if (!isset($unnamed)) {
             $unnamed = false;
-        }
+        } //!isset( $unnamed )
         if (trim((string) $delimiter) == '') {
             $this->err_msg['msg'] = 'Error: Delimiter are required.';
 
             return false;
-        }
+        } //trim( (string) $delimiter ) == ''
         if ($this->con != null) {
             $obj = $this->con->prepare($sql_statement);
             if (!$unnamed) {
                 for ($i = 0; $i < count($params); ++$i) {
                     $params_split = explode($delimiter, $params[$i]);
                     (trim($params_split[2]) == 'INT') ? $obj->bindParam($params_split[0], $params_split[1], PDO::PARAM_INT) : $obj->bindParam($params_split[0], $params_split[1], PDO::PARAM_STR);
-                }
+                } //$i = 0; $i < count( $params ); ++$i
                 try {
                     $obj->execute();
                     $this->count = $obj->rowCount();
                 } catch (PDOException $e) {
-                    $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                    $this->err_msg['error'] = $e->getMessage();
+                    $this->err_msg['line'] = $e->getLine();
                     $this->err_msg['errorInfo'] = $this->con->errorInfo();
                     $this->err_msg['errorCode'] = $this->con->errorCode();
 
                     return false;
                 } catch (Throwable $e) {
-                    $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                    $this->err_msg['error'] = $e->getMessage();
+                    $this->err_msg['line'] = $e->getLine();
                     $this->err_msg['errorInfo'] = $this->con->errorInfo();
                     $this->err_msg['errorCode'] = $this->con->errorCode();
 
                     return false;
                 }
-            } else {
+            } //!$unnamed
+            else {
                 try {
                     $obj->execute($params);
                     $this->count = $obj->rowCount();
-
                     if ($fetch_rows) {
                         return $obj->fetchAll(PDO::FETCH_ASSOC);
                         //PDO::FETCH_OBJ || PDO::FETCH_ARRAY || PDO::FETCH_ASSOC
-                    } else {
+                    } //$fetch_rows
+                    else {
                         return true;
                     }
-
                     if (is_numeric($this->con->lastInsertId())) {
                         return $this->con->lastInsertId();
-                    }
+                    } //is_numeric( $this->con->lastInsertId() )
                 } catch (PDOException $e) {
-                    $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                    $this->err_msg['error'] = $e->getMessage();
+                    $this->err_msg['line'] = $e->getLine();
                     $this->err_msg['errorInfo'] = $this->con->errorInfo();
                     $this->err_msg['errorCode'] = $this->con->errorCode();
 
                     return false;
                 } catch (Throwable $e) {
                     print_r($e->getMessage());
-                    $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                    $this->err_msg['error'] = $e->getMessage();
+                    $this->err_msg['line'] = $e->getLine();
                     $this->err_msg['errorInfo'] = $this->con->errorInfo();
                     $this->err_msg['errorCode'] = $this->con->errorCode();
 
@@ -414,7 +410,8 @@ class DBMS
             }
 
             return true;
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -431,19 +428,22 @@ class DBMS
 
                 return $sttmnt->fetch();
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -460,19 +460,22 @@ class DBMS
 
                 return $sttmnt->fetchColumn();
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -489,28 +492,31 @@ class DBMS
                 $column = array();
                 foreach ($q->fetch(PDO::FETCH_ASSOC) as $key => $val) {
                     $column[] = $key;
-                }
-
+                } //$q->fetch( PDO::FETCH_ASSOC ) as $key => $val
                 return $column;
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
         }
     }
 
-    public function increment($table, $data, $explode = ',')
+    //Increment table autoamtic
+    public function increment($table, $data, $field = 'id', $explode = ',')
     {
         if ($this->con != null) {
             try {
@@ -521,27 +527,29 @@ class DBMS
                     list($field, $value) = explode('=', $data_column[$x]);
                     $txt_fields .= ($x == 0) ? $field : ','.$field;
                     $txt_values .= ($x == 0) ? $value : ','.$value;
-                }
-
+                } //$x = 0; $x < count( $data_column ); ++$x
                 $sql = 'INSERT INTO '.$table.' (id, '.$txt_fields.') VALUES((select IFNULL(max(id) + 1 , 1) from '.$table.' as alias), '.$txt_values.');';
                 $this->sql = $sql;
                 $result = $this->con->exec($sql);
 
                 return ($result === false) ? $result : $this->con->lastInsertId();
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -560,27 +568,29 @@ class DBMS
                     list($field, $value) = explode('=', $data_column[$x]);
                     $txt_fields .= ($x == 0) ? $field : ','.$field;
                     $txt_values .= ($x == 0) ? $value : ','.$value;
-                }
-
+                } //$x = 0; $x < count( $data_column ); ++$x
                 $sql = 'INSERT INTO '.$table.' ('.$txt_fields.') VALUES('.$txt_values.');';
                 $this->sql = $sql;
                 $result = $this->con->exec($sql);
 
                 return ($result === false) ? $result : $this->con->lastInsertId();
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -596,27 +606,31 @@ class DBMS
                     $sql = 'UPDATE '.$table.' SET '.$data.' WHERE '.$condition.';';
                     $this->sql = $sql;
                     $result = $this->con->exec($sql);
-                } else {
+                } //trim( $condition ) != ''
+                else {
                     $sql = 'UPDATE '.$table.' SET '.$data.';';
                     $this->sql = $sql;
                     $result = $this->con->exec($sql);
                 }
 
                 return $result;
-            } catch (PDOException  $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+            } catch (PDOException $e) {
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -632,7 +646,8 @@ class DBMS
                     $sql = 'DELETE FROM '.$table.' WHERE '.$condition.';';
                     $this->sql = $sql;
                     $result = $this->con->exec($sql);
-                } else {
+                } //trim( $condition ) != ''
+                else {
                     $sql = 'DELETE FROM '.$table.';';
                     $this->sql = $sql;
                     $result = $this->con->exec($sql);
@@ -640,66 +655,22 @@ class DBMS
 
                 return $result;
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
-            $this->err_msg['msg'] = 'Error: Connection to database lost.';
-
-            return false;
-        }
-    }
-
-    //Execute Store Procedures
-    public function StoredProcedure(string $sp_query, array $params = [], $fetch_rows = false)
-    {
-        if ($this->con != null) {
-            try {
-                $this->sql = $sp_query;
-
-                $stm = $this->con->prepare($sp_query);
-
-                if(!empty($params)){
-
-                    $stm->execute($params);
-
-                }else{
-
-                    $stm->execute();
-
-                } 
-                           if ($fetch_rows) {
-                        return $stm->fetchAll(PDO::FETCH_ASSOC);
-                        //PDO::FETCH_OBJ || PDO::FETCH_ARRAY || PDO::FETCH_ASSOC
-                    } else {
-                        return true;
-                    }             
-                
-
-                
-            } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
-                $this->err_msg['errorInfo'] = $this->con->errorInfo();
-                $this->err_msg['errorCode'] = $this->con->errorCode();
-
-                return false;
-            } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
-                $this->err_msg['errorInfo'] = $this->con->errorInfo();
-                $this->err_msg['errorCode'] = $this->con->errorCode();
-
-                return false;
-            }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -711,36 +682,41 @@ class DBMS
     {
         $sql_statement = '';
         $dbtype = $this->database_type;
-
         if ($dbtype == 'sqlsrv' || $dbtype == 'mssql' || $dbtype == 'ibm' || $dbtype == 'dblib' || $dbtype == 'odbc') {
             $sql_statement = 'SELECT TOP 1 '.$table_field.' FROM '.$db_table.' ORDER BY '.$table_field.' DESC;';
-        } elseif ($dbtype == 'oracle') {
+        } //$dbtype == 'sqlsrv' || $dbtype == 'mssql' || $dbtype == 'ibm' || $dbtype == 'dblib' || $dbtype == 'odbc'
+        elseif ($dbtype == 'oracle') {
             $sql_statement = 'SELECT '.$table_field.' FROM '.$db_table.' WHERE ROWNUM<=1 ORDER BY '.$table_field.' DESC;';
-        } elseif ($dbtype == 'ifmx' || $dbtype == 'fbd') {
+        } //$dbtype == 'oracle'
+        elseif ($dbtype == 'ifmx' || $dbtype == 'fbd') {
             $sql_statement = 'SELECT FIRST 1 '.$table_field.' FROM '.$db_table.' ORDER BY '.$table_field.' DESC;';
-        } elseif ($dbtype == 'mysql' || $dbtype == 'sqlite2' || $dbtype == 'sqlite3') {
+        } //$dbtype == 'ifmx' || $dbtype == 'fbd'
+        elseif ($dbtype == 'mysql' || $dbtype == 'sqlite2' || $dbtype == 'sqlite3') {
             $sql_statement = 'SELECT '.$table_field.' FROM '.$db_table.' ORDER BY '.$table_field.' DESC LIMIT 1;';
-        } elseif ($dbtype == 'pg') {
+        } //$dbtype == 'mysql' || $dbtype == 'sqlite2' || $dbtype == 'sqlite3'
+        elseif ($dbtype == 'pg') {
             $sql_statement = 'SELECT '.$table_field.' FROM '.$db_table.' ORDER BY '.$table_field.' DESC LIMIT 1 OFFSET 0;';
-        }
-
+        } //$dbtype == 'pg'
         if ($this->con != null) {
             try {
                 return $this->query_single($sql_statement);
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -753,24 +729,26 @@ class DBMS
         $complete = '';
         $sql_statement = '';
         $dbtype = $this->database_type;
-
         if ($dbtype == 'sqlsrv' || $dbtype == 'mssql' || $dbtype == 'ibm' || $dbtype == 'dblib' || $dbtype == 'odbc' || $dbtype == 'sqlite2' || $dbtype == 'sqlite3') {
             $sql_statement = "SELECT name FROM sysobjects WHERE xtype='U';";
-        } elseif ($dbtype == 'oracle') {
+        } //$dbtype == 'sqlsrv' || $dbtype == 'mssql' || $dbtype == 'ibm' || $dbtype == 'dblib' || $dbtype == 'odbc' || $dbtype == 'sqlite2' || $dbtype == 'sqlite3'
+        elseif ($dbtype == 'oracle') {
             //If the query statement fail, try with uncomment the next line:
             //$sql_statement = "SELECT table_name FROM tabs;";
             $sql_statement = 'SELECT table_name FROM cat;';
-        } elseif ($dbtype == 'ifmx' || $dbtype == 'fbd') {
+        } //$dbtype == 'oracle'
+        elseif ($dbtype == 'ifmx' || $dbtype == 'fbd') {
             $sql_statement = "SELECT RDB$RELATION_NAME FROM RDB$RELATIONS WHERE RDB$SYSTEM_FLAG = 0 AND RDB$VIEW_BLR IS NULL ORDER BY RDB$RELATION_NAME;";
-        } elseif ($dbtype == 'mysql') {
+        } //$dbtype == 'ifmx' || $dbtype == 'fbd'
+        elseif ($dbtype == 'mysql') {
             if ($database != '') {
                 $complete = " FROM $database";
-            }
+            } //$database != ''
             $sql_statement = 'SHOW tables '.$complete.';';
-        } elseif ($dbtype == 'pg') {
+        } //$dbtype == 'mysql'
+        elseif ($dbtype == 'pg') {
             $sql_statement = 'SELECT relname AS name FROM pg_stat_user_tables ORDER BY relname;';
-        }
-
+        } //$dbtype == 'pg'
         if ($this->con != null) {
             try {
                 $this->sql = $sql_statement;
@@ -780,19 +758,22 @@ class DBMS
 
                 return $sth->fetchAll(PDO::FETCH_ASSOC);
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -804,40 +785,45 @@ class DBMS
     {
         $sql_statement = '';
         $dbtype = $this->database_type;
-
         if ($dbtype == 'sqlsrv' || $dbtype == 'mssql' || $dbtype == 'ibm' || $dbtype == 'dblib' || $dbtype == 'odbc' || $dbtype == 'sqlite2' || $dbtype == 'sqlite3') {
             $sql_statement = 'SELECT name FROM sys.Databases;';
-        } elseif ($dbtype == 'oracle') {
+        } //$dbtype == 'sqlsrv' || $dbtype == 'mssql' || $dbtype == 'ibm' || $dbtype == 'dblib' || $dbtype == 'odbc' || $dbtype == 'sqlite2' || $dbtype == 'sqlite3'
+        elseif ($dbtype == 'oracle') {
             //If the query statement fail, try with uncomment the next line:
             //$sql_statement = "SELECT * FROM user_tablespaces";
             $sql_statement = "SELECT * FROM $database;";
-        } elseif ($dbtype == 'ifmx' || $dbtype == 'fbd') {
+        } //$dbtype == 'oracle'
+        elseif ($dbtype == 'ifmx' || $dbtype == 'fbd') {
             $sql_statement = '';
-        } elseif ($dbtype == 'mysql') {
+        } //$dbtype == 'ifmx' || $dbtype == 'fbd'
+        elseif ($dbtype == 'mysql') {
             $sql_statement = 'SHOW DATABASES;';
-        } elseif ($dbtype == 'pg') {
+        } //$dbtype == 'mysql'
+        elseif ($dbtype == 'pg') {
             $sql_statement = 'SELECT datname AS name FROM pg_database;';
-        }
-
+        } //$dbtype == 'pg'
         if ($this->con != null) {
             try {
                 $this->sql = $sql_statement;
 
                 return $this->con->query($this->sql);
             } catch (PDOException $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             } catch (Throwable $e) {
-                $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
                 $this->err_msg['errorInfo'] = $this->con->errorInfo();
                 $this->err_msg['errorCode'] = $this->con->errorCode();
 
                 return false;
             }
-        } else {
+        } //$this->con != null
+        else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
@@ -863,6 +849,49 @@ class DBMS
             $this->con = null;
 
             return true;
+        } //$this->con
+        else {
+            $this->err_msg['msg'] = 'Error: Connection to database lost.';
+
+            return false;
+        }
+    }
+
+    //Execute Store Procedures
+    public function StoredProcedure(string $sp_query, array $params, $fetch_rows = false): bool
+    {
+        if ($this->con != null) {
+            try {
+                $this->sql = $sp_query;
+
+                $stm = $this->con->prepare($sp_query);
+
+                if (!empty($params)) {
+                    $stm->execute($params);
+                } else {
+                    $stm->execute();
+                }
+                if ($fetch_rows) {
+                    return $stm->fetchAll(PDO::FETCH_ASSOC);
+                    //PDO::FETCH_OBJ || PDO::FETCH_ARRAY || PDO::FETCH_ASSOC
+                } else {
+                    return true;
+                }
+            } catch (PDOException $e) {
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
+                $this->err_msg['errorInfo'] = $this->con->errorInfo();
+                $this->err_msg['errorCode'] = $this->con->errorCode();
+
+                return false;
+            } catch (Throwable $e) {
+                $this->err_msg['error'] = $e->getMessage();
+                $this->err_msg['line'] = $e->getLine();
+                $this->err_msg['errorInfo'] = $this->con->errorInfo();
+                $this->err_msg['errorCode'] = $this->con->errorCode();
+
+                return false;
+            }
         } else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
@@ -870,10 +899,11 @@ class DBMS
         }
     }
 
-    public function insertSingle(string $sBaseDatos, string $sTable, array $aData): bool
+    // inser single table with array
+    public function insertSingle(string $sTable, array $aData): bool
     {
         try {
-            $this->sql = 'INSERT INTO '.$sBaseDatos.'.'.$sTable.' ('.implode(', ', array_keys($aData)).') VALUES '.$this->argsInsert(count($aData), 1).';';
+            $this->sql = 'INSERT INTO '.$sTable.' ('.implode(', ', array_keys($aData)).') VALUES '.$this->argsInsert(count($aData), 1).';';
 
             $parse = $this->parsingValuesQuery($aData);
 
@@ -883,24 +913,25 @@ class DBMS
 
             return $stm->execute($assoc_values);
         } catch (PDOException $e) {
-            $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+            $this->err_msg['error'] = $e->getMessage();
+            $this->err_msg['line'] = $e->getLine();
             $this->err_msg['errorInfo'] = $this->con->errorInfo();
             $this->err_msg['errorCode'] = $this->con->errorCode();
 
             return false;
         } catch (Throwable $e) {
-            $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
-
+            $this->err_msg['error'] = $e->getMessage();
+            $this->err_msg['line'] = $e->getLine();
 
             return false;
         }
     }
 
-    public function insertMultiple(string $sBaseDatos, string $sTable, array $aRows): bool
+    public function insertMultiple(string $sTable, array $aRows): bool
     {
         try {
             $aInsert = array();
-            $this->sql = 'INSERT INTO '.$sBaseDatos.'.'.$sTable.' ('.implode(', ', array_keys($aRows[0])).') VALUES '.$this->argsInsert(count($aRows[0]), count($aRows)).';';
+            $this->sql = 'INSERT INTO '.$sTable.' ('.implode(', ', array_keys($aRows[0])).') VALUES '.$this->argsInsert(count($aRows[0]), count($aRows)).';';
 
             foreach ($aRows as $i => $aData) {
                 $aInsert = array_merge_recursive($aInsert, array_values($this->parsingValuesQuery($aData)));
@@ -908,14 +939,15 @@ class DBMS
 
             return $this->con->prepare($this->sql)->execute($aInsert);
         } catch (PDOException $e) {
-            $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+            $this->err_msg['error'] = $e->getMessage();
+            $this->err_msg['line'] = $e->getLine();
             $this->err_msg['errorInfo'] = $this->con->errorInfo();
             $this->err_msg['errorCode'] = $this->con->errorCode();
 
             return false;
         } catch (Throwable $e) {
-            $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
-
+            $this->err_msg['error'] = $e->getMessage();
+            $this->err_msg['line'] = $e->getLine();
 
             return false;
         }
@@ -932,7 +964,7 @@ class DBMS
         }
     }
 
-    // devuelve los registros en tipo especifico
+    // devuelve los registros en tipado de datos especifico
     public function execQueryList($sql)
     {
         try {
@@ -958,27 +990,28 @@ class DBMS
 
             foreach ($aDataParsing as $key => $value) {
                 if (!is_null($value)) {
-                    if (is_int($value)) {
-                        $v = (int) $value;
-                    }
-                    if (is_string($value)) {
+                    if (is_numeric($value)) {
+                        if (strpos((string) $value, '.') === false) {
+                            $v = (int) $value;
+                        } else {
+                            $v = (float) $value;
+                        }
+                    } elseif (is_string($value)) {
                         $v = strlen($value) > 0 ? $this->magicQuotes(utf8_encode($value)) : '';
-                    }
-                    if (is_float($value)) {
-                        $v = (float) $value;
-                    }
-                    if (is_bool($value)) {
-                        $v = (bool) $value;
                     }
                 }
 
                 /*
-                $v = is_null($value) ? null : (
-                    is_numeric($value) ? (strpos((string) $value, '.') === false ? (int) $value : (float) $value) : (
-                        is_string($value) ? (strlen($value) > 0 ? $this->magicQuotes(utf8_encode($value)) : '') : null
-                    )
-                );
-                */
+                      $v = is_null($value) ? null : (
+                          is_numeric($value) ?
+                          (strpos((string) $value, '.') === false ?
+                          (int) $value : (float) $value) : (
+                              is_string($value) ?
+                               (strlen($value) > 0 ?
+                               $this->magicQuotes(utf8_encode($value)) : '') : null
+                          )
+                      );
+                      */
 
                 $aParsing[$key] = $v;
             }

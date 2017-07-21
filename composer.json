@@ -12,7 +12,7 @@
         ],
         "preformatter": "php-cs-fixer fix ./library/ --rules=@PSR2,@Symfony --dry-run",
         "formatter": [
-            "php-cs-fixer fix ./library/system.class.php --rules=@PSR2,@Symfony,@PHP71Migration --using-cache=no --show-progress=evaluating"
+            "php-cs-fixer fix ./library/ --rules=@PSR2,@Symfony --using-cache=no --show-progress=evaluating"
         ],
         "documentation": "phpdoc -d ./library/  -d app -t ./build/docs/ --template='responsive'",
         "post-install-cmd": [

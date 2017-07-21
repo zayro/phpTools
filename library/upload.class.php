@@ -34,8 +34,8 @@ class upload extends Exception
         $this->ruta = $ruta;
         $this->documento = $documento;
 
-    /* propiedades de carga de archivos */
-    $this->error = $this->documento['error'];
+        /* propiedades de carga de archivos */
+        $this->error = $this->documento['error'];
         $this->peso = $this->documento['size'];
         $this->nombre = $this->documento['name'];
         $this->tmp = $this->documento['tmp_name'];

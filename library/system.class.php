@@ -419,7 +419,7 @@ class system
      *
      * @return type PHP_EOL
      */
-    private static function detectBrowser()
+    public Wfunction detectBrowser()
     {
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
             foreach ($this->browser() as $sParent) {
@@ -439,7 +439,7 @@ class system
      *
      * @return type PHP_EOL
      */
-    private static function detectOS()
+    public function detectOS()
     {
         $sNombrePlataforma = '';
         $sOs = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
