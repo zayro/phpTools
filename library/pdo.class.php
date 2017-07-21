@@ -890,8 +890,7 @@ class DBMS
             return false;
         } catch (Throwable $e) {
             $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
-            $this->err_msg['errorInfo'] = $this->con->errorInfo();
-            $this->err_msg['errorCode'] = $this->con->errorCode();
+
 
             return false;
         }
@@ -908,7 +907,16 @@ class DBMS
             }
 
             return $this->con->prepare($this->sql)->execute($aInsert);
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
+            $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+            $this->err_msg['errorInfo'] = $this->con->errorInfo();
+            $this->err_msg['errorCode'] = $this->con->errorCode();
+
+            return false;
+        } catch (Throwable $e) {
+            $this->err_msg['error'] = $e->getMessage();$this->err_msg['line'] = $e->getLine();
+
+
             return false;
         }
     }

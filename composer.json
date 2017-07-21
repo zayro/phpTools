@@ -41,16 +41,12 @@
     },
     "autoload": {
         "psr-4": {
-            "PhPdOrm\\config\\": "config/",
-            "PhPdOrm\\library\\": "library/",
-            "PhPdOrm\\app\\": "app/"
+            "PhPdOrm\\library\\": "library"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "config\\": "config/",
-            "library\\": "library/",
-            "app\\": "app/"
+            "library\\": "library"
         }
     }
 
