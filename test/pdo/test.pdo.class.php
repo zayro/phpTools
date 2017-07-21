@@ -4,13 +4,13 @@ error_reporting(1);
 
 require_once __DIR__.'/../../vendor/autoload.php';
 
-use library\DBMS;
+use PhPdOrm\DBMS;
 use Testify\Testify;
 
 $tf = new Testify("PDO class Test");
 
 $tf->beforeEach(function ($tf) {
-    $tf->data->instance = new DBMS('mysql', '127.0.0.1', '', 'root', 'aite', '3306');
+    $tf->data->instance = new DBMS('mysql', '127.0.0.1', '', 'marlon', 'zayro', '3307');
     $tf->data->instance->connect();
     $tf->data->instance->query('use demo;');
 });

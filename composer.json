@@ -41,12 +41,12 @@
     },
     "autoload": {
         "psr-4": {
-            "PhPdOrm\\library\\": "library"
+            "PhPdOrm\\": "library"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "library\\": "library"
+            "PhPdOrm\\": "locale"
         }
     }
 

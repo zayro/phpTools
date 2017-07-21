@@ -1,6 +1,6 @@
 <?php
 
-namespace PhPdOrm;
+namespace library;
 
 use Exception;
 

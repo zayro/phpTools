@@ -1,6 +1,6 @@
 <?php
 
-namespace PhPdOrm;
+namespace library;
 
 //require_once('../run.php');
 
