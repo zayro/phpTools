@@ -740,7 +740,7 @@ class DBMS
 
                 return false;
             }
-        } else {obj
+        } else {
             $this->err_msg['msg'] = 'Error: Connection to database lost.';
 
             return false;
