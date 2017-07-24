@@ -419,7 +419,7 @@ class system
      *
      * @return type PHP_EOL
      */
-    public Wfunction detectBrowser()
+    public function detectBrowser()
     {
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
             foreach ($this->browser() as $sParent) {

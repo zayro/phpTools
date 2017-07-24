@@ -858,7 +858,7 @@ class DBMS
     }
 
     //Execute Store Procedures
-    public function StoredProcedure(string $sp_query, array $params, $fetch_rows = false): bool
+    public function StoredProcedure(string $sp_query, array $params, $fetch_rows = false)
     {
         if ($this->con != null) {
             try {
@@ -872,6 +872,7 @@ class DBMS
                     $stm->execute();
                 }
                 if ($fetch_rows) {
+                    $this->count = $stm->rowCount();
                     return $stm->fetchAll(PDO::FETCH_ASSOC);
                     //PDO::FETCH_OBJ || PDO::FETCH_ARRAY || PDO::FETCH_ASSOC
                 } else {
