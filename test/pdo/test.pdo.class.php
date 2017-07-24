@@ -7,6 +7,10 @@ require_once __DIR__.'/../../vendor/autoload.php';
 use PhPdOrm\DBMS;
 use Testify\Testify;
 
+// all methods
+#print_r($_REQUEST);
+// only method post, update, delete
+#print(file_get_contents("php://input"));
 $tf = new Testify("PDO class Test");
 
 $tf->beforeEach(function ($tf) {
@@ -16,14 +20,14 @@ $tf->beforeEach(function ($tf) {
 });
 
 
-$tf->afterEach(function ($tf) {        
+$tf->afterEach(function ($tf) {
     $tf->data->instance->disconnect();
 });
 
 $tf->test("Testing process() method", function ($tf) {
     $db = $tf->data->instance;
 
-    $tf->assert($db->connect() == true, "conexion a la base de datos");    
+    $tf->assert($db->connect() == true, "conexion a la base de datos");
 
     $db->query('CREATE DATABASE IF NOT EXISTS demo;');
 
@@ -31,9 +35,9 @@ $tf->test("Testing process() method", function ($tf) {
 
     $db->query('DROP TABLE IF EXISTS `TB_DEMO`;');
 
-    $db->query('DROP PROCEDURE IF EXISTS GetDemo;'); 
+    $db->query('DROP PROCEDURE IF EXISTS GetDemo;');
     
-    $db->query('DROP PROCEDURE IF EXISTS GetAllDemo;');    
+    $db->query('DROP PROCEDURE IF EXISTS GetAllDemo;');
 
     $query_create_table = "CREATE TABLE TB_DEMO (
     ID INT NOT NULL AUTO_INCREMENT,
@@ -53,7 +57,7 @@ $tf->test("Testing process() method", function ($tf) {
     $query_create_procedure = "CREATE PROCEDURE GetAllDemo()
     BEGIN
     SELECT * FROM TB_DEMO;
-    END";    
+    END";
 
     $process =  $db->query($query_create_table);
     $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
@@ -65,26 +69,25 @@ $tf->test("Testing process() method", function ($tf) {
 
     $process =  $db->query($query_create_procedure);
     $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
-    $tf->assert($process == true, "crear procedimiento almacenado ".$msg);    
+    $tf->assert($process == true, "crear procedimiento almacenado ".$msg);
 
     $process = $db->query("truncate TB_DEMO;");
     $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
     $tf->assert($process == true, "limpia la tabla".$msg);
-
-  });
+});
 
 $tf->test("Testing insert() method", function ($tf) {
-    $db = $tf->data->instance;    
+    $db = $tf->data->instance;
 
     $process = $db->insert('TB_DEMO', "NAME='Evert Ulises German',ADDRESS='Tetameche #3035 Culiacan Sin. Mexico',COMPANY='Freelancer'");
     $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
     $tf->assert($process == true, "crear registros metodo insert".$msg);
          
-    $result = $db->insertSingle('demo', 'TB_DEMO', array(  'NAME' => 'dato 4.1',  'ADDRESS' => 'dato 4.2',  'COMPANY' => 'dato 4.3'  ));
+    $result = $db->insertSingle('TB_DEMO', array(  'NAME' => 'dato 4.1',  'ADDRESS' => 'dato 4.2',  'COMPANY' => 'dato 4.3'  ));
     $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
     $tf->assert($process == true, "crear registros metodo insertSingle".$msg);
 
-    $result = $db->insertMultiple('demo', 'TB_DEMO', array( array(  'NAME' => 'dato 4.1',  'ADDRESS' => 'dato 4.2',  'COMPANY' => 'dato 4.3'  ), array(  'NAME' => 'dato 4.1',  'ADDRESS' => 'dato 4.2',  'COMPANY' => 'dato 4.3'  )));
+    $result = $db->insertMultiple('TB_DEMO', array( array(  'NAME' => 'dato 4.1',  'ADDRESS' => 'dato 4.2',  'COMPANY' => 'dato 4.3'  ), array(  'NAME' => 'dato 4.1',  'ADDRESS' => 'dato 4.2',  'COMPANY' => 'dato 4.3'  )));
     $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
     $tf->assert($process == true, "crear registros metodo insertMultiple".$msg);
 
@@ -127,30 +130,27 @@ $tf->test("Testing update() method", function ($tf) {
     $process = $db->query("UPDATE TB_DEMO SET NAME='wArLeY996',COMPANY='Freelancer MX' WHERE ID=1;");
     $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
     $tf->assertFalse($process == true, "actualizar registros metodo query".$msg);
-
-    
 });
 
 $tf->test("Testing select() method", function ($tf) {
     $db = $tf->data->instance;
     $db->query('use demo;');
 
-    $process = $db->query('SELECT NAME, ADDRESS FROM TB_DEMO', 'obj');     
-    $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);    
+    $process = $db->query('SELECT NAME, ADDRESS FROM TB_DEMO', 'obj');
+    $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
     $tf->assert(is_object($process), "selecciona registros modo object".$msg);
     
-    $process = $db->query('SELECT NAME, ADDRESS FROM TB_DEMO', 'assoc');       
-    $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);    
-    $tf->assert(is_array($process), "selecciona registros modo assoc".$msg);      
+    $process = $db->query('SELECT NAME, ADDRESS FROM TB_DEMO', 'assoc');
+    $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
+    $tf->assert(is_array($process), "selecciona registros modo assoc".$msg);
 
-    $process = $db->query('SELECT NAME, ADDRESS FROM TB_DEMO', 'both');       
-    $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);    
+    $process = $db->query('SELECT NAME, ADDRESS FROM TB_DEMO', 'both');
+    $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
     $tf->assert(is_array($process), "selecciona registros modo both".$msg);
 
-    $process = $db->query('SELECT NAME, ADDRESS FROM TB_DEMO', 'named');       
-    $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);    
-    $tf->assert(is_array($process), "selecciona registros modo named".$msg);        
-    
+    $process = $db->query('SELECT NAME, ADDRESS FROM TB_DEMO', 'named');
+    $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
+    $tf->assert(is_array($process), "selecciona registros modo named".$msg);
 });
 
 $tf->test("Testing call() method", function ($tf) {
@@ -168,8 +168,7 @@ $tf->test("Testing call() method", function ($tf) {
     $params = array(20);
     $process = $db->query_secure("call GetDemo(?);", $params, true, true);
     $msg = ($db->getError() == null) ? '': '<br><hr><br>'.json_encode($db->getError(), JSON_PRETTY_PRINT);
-    $tf->assert(is_array($process), "ejecuta procedimiento almacenado metodo 2".$msg);    
-
+    $tf->assert(is_array($process), "ejecuta procedimiento almacenado metodo 2".$msg);
 });
 
 $tf->test("Testing delete() method", function ($tf) {
@@ -199,6 +198,3 @@ $tf->test("Testing delete() method", function ($tf) {
 });
 
 $tf->run();
-
-
-

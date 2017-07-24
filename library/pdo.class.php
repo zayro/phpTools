@@ -858,7 +858,7 @@ class DBMS
     }
 
     //Execute Store Procedures
-    public function StoredProcedure(string $sp_query, array $params, $fetch_rows = false)
+    public function StoredProcedure(string $sp_query, array $params = [], $fetch_rows = false)
     {
         if ($this->con != null) {
             try {
