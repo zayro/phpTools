@@ -901,7 +901,7 @@ class DBMS
     }
 
     // inser single table with array
-    public function insertSingle(string $sTable, array $aData): bool
+    public function insertSingle(string $sTable, array $aData)
     {
         try {
             $this->sql = 'INSERT INTO '.$sTable.' ('.implode(', ', array_keys($aData)).') VALUES '.$this->argsInsert(count($aData), 1).';';
@@ -928,7 +928,7 @@ class DBMS
         }
     }
 
-    public function insertMultiple(string $sTable, array $aRows): bool
+    public function insertMultiple(string $sTable, array $aRows)
     {
         try {
             $aInsert = array();
@@ -954,7 +954,7 @@ class DBMS
         }
     }
 
-    public function updateSingle(string $sBaseDatos, string $sTable, array $aData, array $aWhere): bool
+    public function updateSingle(string $sTable, array $aData, array $aWhere)
     {
         try {
             $this->sql = 'UPDATE '.$sBaseDatos.'.'.$sTable.' SET '.implode(' = ?, ', array_keys($aData)).' = ? WHERE '.implode(' = ? AND ', array_keys($aWhere)).' = ?;';
