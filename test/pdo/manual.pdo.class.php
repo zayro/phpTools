@@ -9,7 +9,7 @@
 ///1.- You need include the class file.
 require './../../library/pdo.class.php';
 
-use library\DBMS;
+use PhPdOrm\DBMS;
 
 ///2.- Instantiate the class with the server parameters.
 // object = new DBMS(shortcut_database_type, server, database_name, user, password, port);
@@ -204,7 +204,7 @@ print "<br>";print "<hr>";print "<br>";
 print "<strong>insertSingle</strong>";
 print "<br>";
 $db->connect();
-$db->query('USE demo;'); 
+$db->query('USE demo;');
 $result = $db->insertSingle(
   'demo',
   'TB_DEMO',
