@@ -4,7 +4,7 @@ namespace PhPdOrm;
 
 //require_once('../run.php');
 
-use config\connect;
+
 
 /**
  * CLASE EXCEL.
@@ -15,7 +15,7 @@ use config\connect;
  *
  * @version 1.0
  */
-class excel extends connect
+class excel extends DBMS
 {
     /**
      * IMPORT CONSULTA EXCEL BDD.
@@ -27,6 +27,11 @@ class excel extends connect
      * @param string $query    consulta sql para exportar
      * @param string $filename nombre del archivo a exportar
      */
+
+    public _construct(){
+       parent::__construct__construct($database_type, $host, $database, $user, $password, $port);
+    }
+
     public function exportar($query, $filename)
     {
         //header("Content-Type: application/vnd.ms-excel");

@@ -20,7 +20,7 @@ class log
      * @param string $cadena texto a escribir en el log
      * @param string $tipo   texto que indica el tipo de mensaje. Los valores normales son Info, Error,
      */
-    public function escribir_log($cadena, $tipo)
+    public function _construct($cadena, $tipo)
     {
         // $arch = fopen(realpath('.') . "/logs/log_" . date("Y-m-d H:i:s.u") . ".txt", "a+");
 

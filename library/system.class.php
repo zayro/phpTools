@@ -406,8 +406,7 @@ class system
         if (empty($_SESSION) or empty($_SESSION['datos']) or !isset($_SESSION['datos'])) {
             echo 'sin acceso al sistema ingrese a la plataforma';
             exit();
-        } //empty( $_SESSION ) or empty( $_SESSION[ 'datos' ] ) or !isset( $_SESSION[ 'datos' ] )
-        else {
+        } else {
             return $this->session_active();
         }
     }
@@ -427,8 +426,8 @@ class system
                 $sVersion = preg_replace('/[^0-9,.]/', '', substr($_SERVER['HTTP_USER_AGENT'], $f, 15));
 
                 return $sParent.' '.$sVersion;
-            } //$this->browser() as $sParent
-        } //isset( $_SERVER[ 'HTTP_USER_AGENT' ] )
+            }
+        }
         return 'unknown';
     }
 

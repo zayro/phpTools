@@ -18,11 +18,10 @@ use config\connect;
  *
  * @license http://opensource.org/licenses/gpl-license.php  GNU Public License
  */
-class csv extends connect
+class csv extends DBMS
 {
-    public function __construct($user = '', $pass = '')
-    {
-        parent::__construct($user, $pass);
+    public _construct(){
+       parent::__construct__construct($database_type, $host, $database, $user, $password, $port);
     }
 
     /**
