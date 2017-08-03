@@ -1,12 +1,10 @@
 <?php
 
 ///1.- You need include the class file.
-require './../../library/system.class.php';
+require './../../library/log.class.php';
 
 use PhPdOrm\log;
 
-$instance = new log();
-
-print "<br>";print "METODO getCurrentUri(): ";print "<br>";
+$instance = new log("cadena de mensaje", "Error");
 
 print "<br>";print "<HR>";print "<br>";

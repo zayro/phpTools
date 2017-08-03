@@ -24,7 +24,7 @@ class log
     {
         // $arch = fopen(realpath('.') . "/logs/log_" . date("Y-m-d H:i:s.u") . ".txt", "a+");
 
-        $nombre_archivo = 'logs/log_'.date('Y-m-d').'.txt';
+        $nombre_archivo = 'log_'.date('Y-m-d').'.txt';
         $arch = fopen($nombre_archivo, 'a+');
 
         fwrite($arch, ' ######################################################################### '.PHP_EOL);
