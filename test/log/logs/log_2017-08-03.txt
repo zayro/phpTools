@@ -1,0 +1,45 @@
+[2017-08-03 15:03:41.066101] [info] Returned a million search results
+[2017-08-03 15:03:41.066200] [error] Oh dear.
+[2017-08-03 15:03:41.066258] [debug] Got these users from the Database.
+    0: array(
+        'name' => 'Kenny Katzgrau',
+        'username' => 'katzgrau',
+    )
+    1: array(
+        'name' => 'Dan Horrigan',
+        'username' => 'dhrrgn',
+    )
+[2017-08-03 15:04:05.352689] [info] Returned a million search results
+[2017-08-03 15:04:05.352844] [error] Oh dear.
+[2017-08-03 15:04:05.352942] [debug] Got these users from the Database.
+    0: array(
+        'name' => 'Kenny Katzgrau',
+        'username' => 'katzgrau',
+    )
+    1: array(
+        'name' => 'Dan Horrigan',
+        'username' => 'dhrrgn',
+    )
+[2017-08-03 15:06:47.711369] [info] Returned a million search results
+[2017-08-03 15:06:47.711491] [error] Oh dear.
+[2017-08-03 15:06:47.711565] [debug] Got these users from the Database.
+    0: array(
+        'name' => 'Kenny Katzgrau',
+        'username' => 'katzgrau',
+    )
+    1: array(
+        'name' => 'Dan Horrigan',
+        'username' => 'dhrrgn',
+    )
+[2017-08-03 15:08:10.335695] [info] Returned a million search results
+[2017-08-03 15:08:10.335803] [error] Oh dear.
+[2017-08-03 15:08:10.335894] [debug] Got these users from the Database.
+    0: array(
+        'name' => 'Kenny Katzgrau',
+        'username' => 'katzgrau',
+    )
+    1: array(
+        'name' => 'Dan Horrigan',
+        'username' => 'dhrrgn',
+    )
+[2017-08-03 15:08:10.336086] [error] Uh Oh!
