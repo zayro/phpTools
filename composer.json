@@ -25,7 +25,7 @@
         "firebase/php-jwt": "^4.0",
         "phpmailer/phpmailer": "dev-master",
         "elmijo/php-error-log": "2.0",
-        "mmucklo/krumo": "*",
+        "katzgrau/klogger": "dev-master",
         "nesbot/carbon": "~1.18",
         "codeguy/upload": "dev-master"
     },
@@ -40,7 +40,9 @@
         "phpdocumentor/phpdocumentor": "2.*",
         "heroku/heroku-buildpack-php": "*",
         "psy/psysh": "@stable",
-        "phploc/phploc": "^4.0"
+        "phploc/phploc": "^4.0",
+        "analog/analog": "dev-master",
+        "mmucklo/krumo": "*"
     },
     "autoload": {
         "psr-4": {
