@@ -275,7 +275,7 @@ class DBMS
                         $list = array();
                         foreach ($sth->fetchAll(PDO::FETCH_ASSOC) as $field) {
                             $list[] = (object) $this->parsingValuesQuery($field);
-                        } //$sth->fetchAll( PDO::FETCH_ASSOC ) as $field
+                        } 
                         return $list;
                     case 'named':
                         return $sth->fetch(PDO::FETCH_NAMED);
