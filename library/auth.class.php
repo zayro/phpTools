@@ -2,119 +2,232 @@
 
 namespace PhPdOrm;
 
-use Firebase\JWT\JWT;
-
 class auth
 {
-    private static $secret_key = 'Sdw1s9x8@?';
-    private static $encrypt = ['HS256'];
-    private static $aud = null;
+    private $db;
+    public $auth;
 
-    /**
-     * CREA EL TOKEN.
-     */
-    public static function SignIn($data)
+    public function __construct($user, $pass)
     {
-        $time = time();
-        $hora = 4;
-        $token = array(
-            'iat' => $time, // Tiempo que inició el token
-            'exp' => $time + ((60 * 60) * $hora),  // Tiempo que expirará el token (+1 hora)
-            'aud' => self::Aud(),
-            'data' => $data, // información del usuario
-        );
-
-        return JWT::encode($token, self::$secret_key);
+        $this->db = new PDO('mysql:dbname=demo;host=localhost;charset=utf8mb4', "$user", "$pass");
+        $this->auth = new \Delight\Auth\Auth($this->db);
     }
 
-    /**
-     * CHEKEA EL TOKEN SI ES VALIDO.
-     */
-    public static function Check($token)
+    public function registro($email, $password, $usermame)
     {
-        if (empty($token)) {
-            throw new Exception('Invalid token is empty.');
+        try {
+            $userId = $this->auth->register($email, $password, $usermame, function ($selector, $token) {
+                // send `$selector` and `$token` to the user (e.g. via email)
+                echo $token;
+                echo '<br>';
+                echo $selector;
+            });
+
+            // we have signed up a new user with the ID `$userId`
+        } catch (\Delight\Auth\InvalidEmailException $e) {
+            // invalid email address
+            echo $e;
+        } catch (\Delight\Auth\InvalidPasswordException $e) {
+            // invalid password
+            echo $e;
+        } catch (\Delight\Auth\UserAlreadyExistsException $e) {
+            // user already exists
+            echo 'usuario ya existe';
+        } catch (\Delight\Auth\TooManyRequestsException $e) {
+            // too many requests
+            echo $e;
         }
+    }
 
-        $decode = JWT::decode(
-            $token,
-            self::$secret_key,
-            self::$encrypt
-        );
+    public function login($email, $password)
+    {
+        try {
+            $this->auth->login($email, $password);
 
-        if ($decode->aud !== self::Aud()) {
-            throw new Exception('Invalid user logged in.');
+            // user is logged in
+        } catch (\Delight\Auth\InvalidEmailException $e) {
+            // wrong email address
+        } catch (\Delight\Auth\InvalidPasswordException $e) {
+            // wrong password
+        } catch (\Delight\Auth\EmailNotVerifiedException $e) {
+            // email not verified
+        } catch (\Delight\Auth\TooManyRequestsException $e) {
+            // too many requests
         }
-
-        return  $decode;
     }
 
-    /**
-     * DESENCRIPTA LOS DATOS DEL TOKEN.
-     */
-    public static function GetData($token)
+    public function verificacion($selector, $token)
     {
-        return JWT::decode(
-            $token,
-            self::$secret_key,
-            self::$encrypt
-        )->data;
-    }
+        try {
+            $this->auth->confirmEmail($selector, $token);
 
-    private static function Aud()
-    {
-        $aud = '';
-
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $aud = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $aud = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
-            $aud = $_SERVER['REMOTE_ADDR'];
+            // email address has been verified
+            echo 'email verificado';
+        } catch (\Delight\Auth\InvalidSelectorTokenPairException $e) {
+            // invalid token
+            echo 'token invalido';
+        } catch (\Delight\Auth\TokenExpiredException $e) {
+            // token expired
+            echo 'token expiro';
+        } catch (\Delight\Auth\UserAlreadyExistsException $e) {
+            // email address already exists
+            echo 'email no existe';
+        } catch (\Delight\Auth\TooManyRequestsException $e) {
+            // too many requests
         }
-
-        $aud .= @$_SERVER['HTTP_USER_AGENT'];
-        $aud .= gethostname();
-
-        return sha1($aud);
     }
 
-    /**
-     * Get hearder Authorization.
-     */
-    public function getAuthorizationHeader()
+    public function olvido_clave($email)
     {
-        $headers = null;
-        if (isset($_SERVER['Authorization'])) {
-            $headers = trim($_SERVER['Authorization']);
-        } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) { //Nginx or fast CGI
-            $headers = trim($_SERVER['HTTP_AUTHORIZATION']);
-        } elseif (function_exists('apache_request_headers')) {
-            $requestHeaders = apache_request_headers();
-            // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
-            $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
-            //print_r($requestHeaders);
-            if (isset($requestHeaders['Authorization'])) {
-                $headers = trim($requestHeaders['Authorization']);
+        try {
+            $this->auth->forgotPassword($email, function ($selector, $token) {
+                // send `$selector` and `$token` to the user (e.g. via email)
+                $url = 'https://www.example.com/reset_password?selector='.urlencode($selector).'&token='.urlencode($token);
+            });
+
+            // request has been generated
+        } catch (\Delight\Auth\InvalidEmailException $e) {
+            // invalid email address
+        } catch (\Delight\Auth\EmailNotVerifiedException $e) {
+            // email not verified
+        } catch (\Delight\Auth\ResetDisabledException $e) {
+            // password reset is disabled
+        } catch (\Delight\Auth\TooManyRequestsException $e) {
+            // too many requests
+        }
+    }
+
+    public function reiniciar_clave($selector, $token, $password)
+    {
+        try {
+            $this->auth->resetPassword($selector, $token, $password);
+
+            // password has been reset
+        } catch (\Delight\Auth\InvalidSelectorTokenPairException $e) {
+            // invalid token
+        } catch (\Delight\Auth\TokenExpiredException $e) {
+            // token expired
+        } catch (\Delight\Auth\ResetDisabledException $e) {
+            // password reset is disabled
+        } catch (\Delight\Auth\InvalidPasswordException $e) {
+            // invalid password
+        } catch (\Delight\Auth\TooManyRequestsException $e) {
+            // too many requests
+        }
+    }
+
+    public function cambiar_clave($oldPassword, $newPassword)
+    {
+        try {
+            $this->auth->changePassword($oldPassword, $newPassword);
+
+            // password has been changed
+        } catch (\Delight\Auth\NotLoggedInException $e) {
+            // not logged in
+        } catch (\Delight\Auth\InvalidPasswordException $e) {
+            // invalid password(s)
+        } catch (\Delight\Auth\TooManyRequestsException $e) {
+            // too many requests
+        }
+    }
+
+    public function cambiar_correo($email)
+    {
+        try {
+            $auth->changeEmail($email, function ($selector, $token) {
+                // send `$selector` and `$token` to the user (e.g. via email)
+            });
+
+            // the change will take effect as soon as the email address has been confirmed
+        } catch (\Delight\Auth\InvalidEmailException $e) {
+            // invalid email address
+        } catch (\Delight\Auth\UserAlreadyExistsException $e) {
+            // email address already exists
+        } catch (\Delight\Auth\EmailNotVerifiedException $e) {
+            // account not verified
+        } catch (\Delight\Auth\NotLoggedInException $e) {
+            // not logged in
+        } catch (\Delight\Auth\TooManyRequestsException $e) {
+            // too many requests
+        }
+    }
+
+    public function reenviar_confirmar_correo($email)
+    {
+        try {
+            $this->auth->resendConfirmationForEmail($email, function ($selector, $token) {
+                // send `$selector` and `$token` to the user (e.g. via email)
+            });
+
+            // the user may now respond to the confirmation request (usually by clicking a link)
+        } catch (\Delight\Auth\ConfirmationRequestNotFound $e) {
+            // no earlier request found that could be re-sent
+        } catch (\Delight\Auth\TooManyRequestsException $e) {
+            // there have been too many requests -- try again later
+        }
+    }
+
+    public function asignar_rol_email($userEmail)
+    {
+        try {
+            $auth->admin()->addRoleForUserByEmail($userEmail, \Delight\Auth\Role::ADMIN);
+        } catch (\Delight\Auth\InvalidEmailException $e) {
+            // unknown email address
+        }
+    }
+
+    public function revocar_rol_email($userEmail)
+    {
+        try {
+            $auth->admin()->removeRoleForUserByEmail($userEmail, \Delight\Auth\Role::ADMIN);
+        } catch (\Delight\Auth\InvalidEmailException $e) {
+            // unknown email address
+        }
+    }
+
+    public function desactivar_usuario_email()
+    {
+    }
+
+    public function eliminar_usuario_email()
+    {
+    }
+
+    public function chequear_rol($userId)
+    {
+        try {
+            if ($auth->admin()->doesUserHaveRole($userId, \Delight\Auth\Role::ADMIN)) {
+                // the specified user is an administrator
+            } else {
+                // the specified user is *not* an administrator
             }
+        } catch (\Delight\Auth\UnknownIdException $e) {
+            // unknown user ID
         }
-
-        return $headers;
     }
 
-    /**
-     * get access token from header.
-     */
-    public function getBearerToken()
+    public function isPasswordAllowed($password)
     {
-        $headers = $this->getAuthorizationHeader();
-        // HEADER: Get the access token from the header
-        if (!empty($headers)) {
-            if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-                return $matches[1];
-            }
+        if (strlen($password) < 8) {
+            return false;
         }
 
-        return null;
+        $blacklist = ['password1', '123456', 'qwerty'];
+
+        if (in_array($password, $blacklist)) {
+            return false;
+        }
+
+        return true;
     }
+
+    public function permisos(\Delight\Auth\Auth $auth) {
+        return $auth->hasAnyRole(
+            \Delight\Auth\Role::MODERATOR,
+            \Delight\Auth\Role::SUPER_MODERATOR,
+            \Delight\Auth\Role::ADMIN,
+            \Delight\Auth\Role::SUPER_ADMIN
+        );
+    }    
 }
+
