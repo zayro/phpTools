@@ -507,4 +507,114 @@ class system
     {
         ob_end_flush();
     }
+
+    public static function imprimir_json($data)
+    {
+        return json_encode($data, JSON_NUMERIC_CHECK);
+    }
+
+    public static function isJson($string)
+    {
+        return ((is_string($string) &&
+              (is_object(json_decode($string)) ||
+              is_array(json_decode($string))))) ? true : false;
+    }
+
+    public static function json_validate($string)
+    {
+        // decode the JSON data
+        $result = json_decode($string);
+
+        // switch and check possible JSON errors
+        switch (json_last_error()) {
+            case JSON_ERROR_NONE:
+                $error = ''; // JSON is valid // No error has occurred
+                break;
+            case JSON_ERROR_DEPTH:
+                $error = 'The maximum stack depth has been exceeded.';
+                break;
+            case JSON_ERROR_STATE_MISMATCH:
+                $error = 'Invalid or malformed JSON.';
+                break;
+            case JSON_ERROR_CTRL_CHAR:
+                $error = 'Control character error, possibly incorrectly encoded.';
+                break;
+            case JSON_ERROR_SYNTAX:
+                $error = 'Syntax error, malformed JSON.';
+                break;
+            // PHP >= 5.3.3
+            case JSON_ERROR_UTF8:
+                $error = 'Malformed UTF-8 characters, possibly incorrectly encoded.';
+                break;
+            // PHP >= 5.5.0
+            case JSON_ERROR_RECURSION:
+                $error = 'One or more recursive references in the value to be encoded.';
+                break;
+            // PHP >= 5.5.0
+            case JSON_ERROR_INF_OR_NAN:
+                $error = 'One or more NAN or INF values in the value to be encoded.';
+                break;
+            case JSON_ERROR_UNSUPPORTED_TYPE:
+                $error = 'A value of a type that cannot be encoded was given.';
+                break;
+            default:
+                $error = 'Unknown JSON error occured.';
+                break;
+          }
+
+        if ($error !== '') {
+            // throw the Exception or exit // or whatever :)
+            exit($error);
+        }
+
+        // everything is OK
+        return $result;
+    }
+
+    public static function validar_json($data)
+    {
+        foreach ($data as $key => $valor) {
+            if (self::isJson($key)) {
+                $parametros = json_decode($key, true);
+            } elseif (self::isJson($valor)) {
+                $parametros = json_decode($valor, true);
+            }
+        }
+
+        if (!isset($parametros)) {
+            $parametros = false;
+        }
+
+        return $parametros;
+    }
+
+    public static function validar_json_key($data)
+    {
+        foreach ($data as $key => $valor) {
+            if (self::isJson($key)) {
+                $parametros = json_decode($key, true);
+            }
+        }
+
+        if (!isset($parametros)) {
+            $parametros = false;
+        }
+
+        return $parametros;
+    }
+
+    public static function validar_json_value($data)
+    {
+        foreach ($data as $key => $valor) {
+            if (self::isJson($valor)) {
+                $parametros = json_decode($valor, true);
+            }
+        }
+
+        if (!isset($parametros)) {
+            $parametros = false;
+        }
+
+        return $parametros;
+    }    
 }
