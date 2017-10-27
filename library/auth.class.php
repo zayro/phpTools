@@ -9,7 +9,7 @@ class auth
 
     public function __construct($user, $pass)
     {
-        $this->db = new PDO('mysql:dbname=demo;host=localhost;charset=utf8mb4', "$user", "$pass");
+        $this->db = new PDO('mysql:dbname=demo;host=127.0.0.1;port=3307;charset=utf8mb4', "$user", "$pass");
         $this->auth = new \Delight\Auth\Auth($this->db);
     }
 
