@@ -1,6 +1,6 @@
 {
     "name": "zayro/phptools",
-    "description": "este es un paquete de librerias php permitiendo peticiones Rest-Full y Multiples base de datos (orm)",
+    "description": "Herramientas para agilizar el proceso de desarrollo.",
     "type": "library",
     "license": "MIT",
     "scripts": {
@@ -30,7 +30,8 @@
         "gargron/fileupload": "~1.4.0",
         "mustangostang/spyc": "^0.6.2",
         "catfan/medoo": "^1.7",
-        "mikecao/flight": "^1.3"
+        "mikecao/flight": "^1.3",
+        "fzaninotto/faker": "^1.9"
     },
     "authors": [{
         "name": "Marlon Zayro Arias Vargas",
