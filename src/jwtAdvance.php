@@ -1,10 +1,10 @@
 <?php
 
-namespace PhPdOrm;
+namespace library;
 
 use Firebase\JWT\JWT;
 
-class jwt
+class jwtAdvance
 {
     private static $secret_key = 'Sdw1s9x8@?';
     private static $encrypt = ['HS256'];
