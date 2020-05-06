@@ -9,7 +9,7 @@
 ///1.- You need include the class file.
 require './../../library/pdo.class.php';
 
-use PhPdOrm\DBMS;
+use library\DBMS;
 
 ///2.- Instantiate the class with the server parameters.
 // object = new DBMS(shortcut_database_type, server, database_name, user, password, port);

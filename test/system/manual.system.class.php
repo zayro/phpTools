@@ -3,7 +3,7 @@
 ///1.- You need include the class file.
 require './../../library/system.class.php';
 
-use PhPdOrm\system;
+use library\system;
 
 $instance = new system();
 

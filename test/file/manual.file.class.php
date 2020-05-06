@@ -3,7 +3,7 @@
 ///1.- You need include the class file.
 require './../../library/file.class.php';
 
-use PhPdOrm\file;
+use library\file;
 
 $instance = new file();
 

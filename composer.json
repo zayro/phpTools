@@ -1,5 +1,5 @@
 {
-    "name": "zayro/php-pdo-orm",
+    "name": "zayro/phptools",
     "description": "este es un paquete de librerias php permitiendo peticiones Rest-Full y Multiples base de datos (orm)",
     "type": "library",
     "license": "MIT",
@@ -26,12 +26,10 @@
         "phpmailer/phpmailer": "dev-master",
         "elmijo/php-error-log": "2.0",
         "katzgrau/klogger": "dev-master",
-        "nesbot/carbon": "~1.18",
         "codeguy/upload": "dev-master",
         "gargron/fileupload": "~1.4.0",
         "mustangostang/spyc": "^0.6.2",
-        "delight-im/auth": "^6.1",
-        "catfan/Medoo": "^1.4",
+        "catfan/medoo": "^1.7",
         "mikecao/flight": "^1.3"
     },
     "authors": [{
@@ -50,12 +48,12 @@
     },
     "autoload": {
         "psr-4": {
-            "PhPdOrm\\": "library/"
+            "Zayro\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PhPdOrm\\": "locale/"
+            "Zayro\\": "locale/"
         }
     }
 

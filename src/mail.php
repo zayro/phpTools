@@ -1,7 +1,7 @@
 <?php
 #define('BASE_URL', 'http://' . filter_input(INPUT_SERVER, 'SERVER_NAME', FILTER_SANITIZE_STRING) . '/ambiensqpro/');
 
-class Correo
+class mail
 {
     public function __construct()
     {
