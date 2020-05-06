@@ -1,7 +1,7 @@
-# API - ORM PHP
+# PHP Tools
 
 ## SYNOPSIS
-Is an open source project that allows creating multi-platform connections with php language code, allowing restfull requests and jwt or session access.
+Is an open source project that allows creating multi-platform connections with php language code, allowing easy requests and jwt or session access.
 
 ## INSTALLATION
 - instalar componentes de composer 
@@ -16,13 +16,7 @@ composer install
 composer self-update
 ```
 
-- instalar paquetes adicionales a composer
-
-```shell
-composer require "nombre" --dev
-```
-
-- cargamos la libreria de composer
+-- cargamos la libreria de composer
 
 ```shell
 composer dump-autoload --optimize 
@@ -44,53 +38,6 @@ composer global remove phpunit/phpunit
         "vendor-dir": "back/vendor"
     }
 ```
-
-## Code Example:
-
-#### Fetching Row:
-- SELECT Statement With NAMED PLACEHOLDERS: 
-
-```php
-<?php
-
-$params = array(':id|2|INT');
-
-$rows = $db->query_secure('SELECT ID, NAME, LASTNAME FROM TABLE WHERE ID=:id;', $params, true, false);
-```
-- SELECT Statement With "UNNAMED PLACEHOLDERS :
-```php
-<?php
-
-$params = array(2);
-
-$rows = $db->query_secure('SELECT NAME FROM TB_USERS WHERE ID=?;', $params, true, true);
-```
-
-##### Result
-
-Sample result example
-
-| id | name | lastname | 
-|:-----------:|:------------:|:------------:|
-| 1       |        John |     Doe    
-
-
-#### How To Get The Latest Id.
-
-IMPORTANT: For getting the latest id inserted is neccessary define the id column how autoincrement.
-
-```php
-<?php
-
-$latestInserted = $db->getLatestId('TABLE', 'ID');
-```
-##### Result
-
-Sample result example
-
-|firstname
-|:------------:
-| Zoe
 
 ## Development tools:
 
