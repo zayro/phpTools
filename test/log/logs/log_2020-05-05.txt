@@ -1,0 +1,12 @@
+[2020-05-05 23:29:09.601064] [info] Returned a million search results
+[2020-05-05 23:29:09.601203] [error] Oh dear.
+[2020-05-05 23:29:09.601244] [debug] Got these users from the Database.
+    0: array(
+        'name' => 'Kenny Katzgrau',
+        'username' => 'katzgrau',
+    )
+    1: array(
+        'name' => 'Dan Horrigan',
+        'username' => 'dhrrgn',
+    )
+[2020-05-05 23:29:09.602080] [error] Uh Oh!
