@@ -1,7 +1,7 @@
 {
     "name": "zayro/phptools",
     "description": "Herramientas para agilizar el proceso de desarrollo.",
-    "type": "library",
+    "type": "src",
     "license": "MIT",
     "scripts": {
         "fix-code": [
@@ -10,11 +10,11 @@
             "bin/php-formatter f:s:f . --exclude=vendor --verbose",
             "bin/php-formatter f:u:s . --exclude=vendor --verbose"
         ],
-        "preformatter": "php-cs-fixer fix ./library/ --rules=@PSR2,@Symfony --dry-run",
+        "preformatter": "php-cs-fixer fix ./src/ --rules=@PSR2,@Symfony --dry-run",
         "formatter": [
-            "php-cs-fixer fix ./library/ --rules=@PSR2,@Symfony --using-cache=no --show-progress=evaluating"
+            "php-cs-fixer fix ./src/ --rules=@PSR2,@Symfony --using-cache=no --show-progress=evaluating"
         ],
-        "documentation": "phpdoc -d ./library/  -d app -t ./build/docs/ --template='responsive'",
+        "documentation": "phpdoc -d ./src/  -d app -t ./build/docs/ --template='responsive'",
         "post-install-cmd": [
             "@composer dump-autoload --optimize"
         ],
