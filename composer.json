@@ -23,7 +23,6 @@
     "require": {
         "bafs/testify": "^1.0",
         "firebase/php-jwt": "^4.0",
-        "phpmailer/phpmailer": "dev-master",
         "elmijo/php-error-log": "2.0",
         "katzgrau/klogger": "dev-master",
         "codeguy/upload": "dev-master",
