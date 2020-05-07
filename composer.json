@@ -22,21 +22,22 @@
     },
     "require": {
         "bafs/testify": "^1.0",
-        "firebase/php-jwt": "^4.0",
         "elmijo/php-error-log": "2.0",
         "katzgrau/klogger": "dev-master",
         "codeguy/upload": "dev-master",
         "gargron/fileupload": "~1.4.0",
-        "mustangostang/spyc": "^0.6.2",
-        "catfan/medoo": "^1.7",
-        "mikecao/flight": "^1.3",
-        "fzaninotto/faker": "^1.9"
+        "mustangostang/spyc": "^0.6.2"       
     },
     "authors": [{
         "name": "Marlon Zayro Arias Vargas",
         "email": "zayro8905@gmail.com"
     }],
     "require-dev": {
+        "catfan/medoo": "^1.7",
+        "mikecao/flight": "^1.3",
+        "fzaninotto/faker": "^1.9",
+        "firebase/php-jwt": "^4.0",
+        "phpmailer/phpmailer": "dev-master",
         "phpdocumentor/phpdocumentor": "2.*",
         "sebastian/phpcpd": "*",
         "friendsofphp/php-cs-fixer": "^2.0",
