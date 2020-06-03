@@ -20,7 +20,7 @@ use config\connect;
  */
 class csv extends DBMS
 {
-    public _construct(){
+    public function __construct(){
        parent::__construct__construct($database_type, $host, $database, $user, $password, $port);
     }
 

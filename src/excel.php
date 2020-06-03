@@ -28,7 +28,7 @@ class excel extends DBMS
      * @param string $filename nombre del archivo a exportar
      */
 
-    public _construct(){
+    public function __construct(){
        parent::__construct__construct($database_type, $host, $database, $user, $password, $port);
     }
 
